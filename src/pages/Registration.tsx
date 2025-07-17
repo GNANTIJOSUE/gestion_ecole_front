@@ -36,6 +36,7 @@ import { green } from '@mui/material/colors';
 import axios from 'axios';
 import html2pdf from 'html2pdf.js';
 import { useMediaQuery } from '@mui/material';
+import { format } from 'date-fns';
 
 const steps = ['Informations personnelles', 'Informations académiques', 'Documents requis'];
 
@@ -439,11 +440,13 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             <Grid item xs={12} sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
                 {isMobile ? (
-                  <MobileDatePicker
+                  <TextField
                     label="Date de naissance"
-                    value={formData.dateOfBirth}
-                    onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
-                    slotProps={{ textField: { fullWidth: true } }}
+                    type="date"
+                    value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
+                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
                   />
                 ) : (
                   <DatePicker
