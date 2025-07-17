@@ -352,11 +352,7 @@ const Home = () => {
       {/* Modale d'inscription ou affichage direct selon l'écran */}
       {isMobile ? (
         <Box sx={{ maxWidth: 700, mx: 'auto', my: 4 }}>
-          <ErrorBoundary>
-            {showRegistration && (
-              <RegistrationMinimal />
-            )}
-          </ErrorBoundary>
+          <RegistrationMinimal />
         </Box>
       ) : (
         <Modal
