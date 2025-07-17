@@ -472,16 +472,38 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="Date de naissance"
-                type="date"
-                value={formData.dateOfBirth}
-                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-                helperText="Format attendu : AAAA-MM-JJ"
-              />
+              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
+                {isMobile ? (
+                  <MobileDatePicker
+                    label="Date de naissance"
+                    inputFormat="yyyy-MM-dd"
+                    value={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
+                    onChange={date => {
+                      setFormData({ ...formData, dateOfBirth: date ? date.toISOString().slice(0, 10) : '' });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        required
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                        helperText="Format attendu : AAAA-MM-JJ"
+                      />
+                    )}
+                  />
+                ) : (
+                  <TextField
+                    required
+                    fullWidth
+                    label="Date de naissance"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    InputLabelProps={{ shrink: true }}
+                    helperText="Format attendu : AAAA-MM-JJ"
+                  />
+                )}
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -801,8 +823,9 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         position: 'relative',
         transition: 'box-shadow 0.3s',
         animation: 'fadeInUp 0.5s',
-        maxHeight: { xs: '98vh', sm: 'none' },
-        overflowY: { xs: 'auto', sm: 'visible' },
+        // Correction : alléger le style sur mobile
+        maxHeight: { sm: '98vh', xs: 'none' },
+        overflowY: { sm: 'auto', xs: 'visible' },
         pb: { xs: 8, sm: 4 }, // padding bas pour éviter le clavier mobile
         '@keyframes fadeInUp': {
           from: { opacity: 0, transform: 'translateY(40px)' },
