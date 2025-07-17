@@ -459,31 +459,21 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               {isMobile ? (
-                <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                  <label htmlFor="date-naissance" style={{ fontWeight: 500, marginBottom: 4 }}>Date de naissance *</label>
-                  <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                    <CalendarTodayIcon style={{ marginRight: 8, color: '#888' }} />
-                    <input
-                      id="date-naissance"
-                      type="text"
-                      placeholder="AAAA-MM-JJ"
-                      value={formData.dateOfBirth}
-                      onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                      style={{
-                        padding: '12px',
-                        borderRadius: 4,
-                        border: '1px solid #ccc',
-                        fontSize: 16,
-                        width: '100%',
-                        marginBottom: 4,
-                      }}
-                      required
-                    />
-                  </div>
+                <>
+                  <label htmlFor="date-naissance" style={{ fontWeight: 500, marginBottom: 4, display: 'block' }}>Date de naissance *</label>
+                  <input
+                    id="date-naissance"
+                    type="text"
+                    placeholder="AAAA-MM-JJ"
+                    value={formData.dateOfBirth}
+                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    style={{ width: '100%', marginBottom: 4, fontSize: 16, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+                    required
+                  />
                   <span style={{ fontSize: 12, color: '#888' }}>
                     Format attendu : AAAA-MM-JJ. Saisissez la date manuellement.
                   </span>
-                </div>
+                </>
               ) : (
                 <TextField
                   required
