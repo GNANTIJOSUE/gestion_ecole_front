@@ -773,6 +773,9 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         position: 'relative',
         transition: 'box-shadow 0.3s',
         animation: 'fadeInUp 0.5s',
+        maxHeight: { xs: '98vh', sm: 'none' },
+        overflowY: { xs: 'auto', sm: 'visible' },
+        pb: { xs: 8, sm: 4 }, // padding bas pour éviter le clavier mobile
         '@keyframes fadeInUp': {
           from: { opacity: 0, transform: 'translateY(40px)' },
           to: { opacity: 1, transform: 'translateY(0)' },
@@ -794,7 +797,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             mb: 2,
           }}>
             <Typography 
-              variant="h4" 
+              variant={window.innerWidth < 600 ? 'h5' : 'h4'}
               gutterBottom 
               align="center"
               sx={{
@@ -803,6 +806,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 mb: 4,
+                fontSize: { xs: 24, sm: 32 },
               }}
             >
               Inscription en ligne
@@ -814,9 +818,11 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                 mb: 4,
                 '& .MuiStepLabel-label': {
                   fontWeight: 600,
+                  fontSize: { xs: 13, sm: 16 },
                 },
                 '& .MuiStepIcon-root': {
                   color: theme.palette.primary.main,
+                  fontSize: { xs: 20, sm: 24 },
                 },
                 '& .MuiStepIcon-root.Mui-active': {
                   color: theme.palette.primary.main,
@@ -834,18 +840,24 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             </Stepper>
 
             <Zoom in={isMounted} timeout={500}>
-              <Box key={`step-content-${activeStep}`}>
+              <Box key={`step-content-${activeStep}`}
+                sx={{
+                  px: { xs: 0, sm: 2 },
+                }}
+              >
                 {renderStepContent(activeStep)}
               </Box>
             </Zoom>
 
             <Box sx={{ 
               display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' },
               justifyContent: 'space-between', 
               mt: 4,
               pt: 3,
               borderTop: '1px solid',
               borderColor: 'divider',
+              gap: { xs: 2, sm: 0 },
             }}>
               <Button
                 disabled={activeStep === 0}
@@ -858,11 +870,13 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                     borderColor: theme.palette.primary.dark,
                     backgroundColor: 'rgba(25, 118, 210, 0.04)',
                   },
+                  width: { xs: '100%', sm: 'auto' },
                 }}
+                fullWidth={window.innerWidth < 600}
               >
                 Retour
               </Button>
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' }, width: { xs: '100%', sm: 'auto' } }}>
                 <Button
                   variant="outlined"
                   color="secondary"
@@ -874,7 +888,9 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                       borderColor: theme.palette.error.dark,
                       backgroundColor: 'rgba(211, 47, 47, 0.04)',
                     },
+                    width: { xs: '100%', sm: 'auto' },
                   }}
+                  fullWidth={window.innerWidth < 600}
                 >
                   Annuler
                 </Button>
@@ -890,7 +906,9 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                       background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`,
                     },
                     px: 4,
+                    width: { xs: '100%', sm: 'auto' },
                   }}
+                  fullWidth={window.innerWidth < 600}
                 >
                   {activeStep === steps.length - 1 ? 'Soumettre' : 'Suivant'}
                 </Button>
