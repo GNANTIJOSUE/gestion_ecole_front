@@ -1014,9 +1014,9 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
       {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
       <form onSubmit={handleSubmit} autoComplete="off">
         <label>Matricule*<br /><input name="matricule" value={formData.matricule} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Date de naissance*<br /><input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required placeholder="AAAA-MM-JJ" style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Prénom*<br /><input name="firstName" value={formData.firstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Nom*<br /><input name="lastName" value={formData.lastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Date de naissance*<br /><input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required placeholder="AAAA-MM-JJ" style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Genre*<br />
           <select name="gender" value={formData.gender} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }}>
             <option value="">Choisir...</option>
