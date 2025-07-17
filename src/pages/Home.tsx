@@ -120,18 +120,21 @@ const Home = () => {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
-      {/* Hero Section */}
-      {/* ... tout le contenu existant ... */}
-      <Container maxWidth="lg">
-        {/* ... autres sections ... */}
+    isMobile ? (
+      <>
+        <div style={{ background: 'red', color: 'white', padding: 12, textAlign: 'center', fontWeight: 700, fontSize: 18 }}>
+          VERSION TEST MOBILE ACTIVE - Si vous voyez ce message, la version simplifiée est bien chargée.
+        </div>
+        <RegistrationMinimal />
+      </>
+    ) : (
+      <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
+        {/* Hero Section */}
+        {/* ... tout le contenu existant ... */}
+        <Container maxWidth="lg">
+          {/* ... autres sections ... */}
 
-        {/* Call to action & inscription */}
-        {isMobile ? (
-          <Box sx={{ maxWidth: 700, mx: 'auto', my: 4 }}>
-            <RegistrationMinimal />
-          </Box>
-        ) : (
+          {/* Call to action & inscription */}
           <>
             <Box sx={{ mb: 8, textAlign: 'center' }}>
               <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
@@ -181,14 +184,14 @@ const Home = () => {
               </Box>
             </Modal>
           </>
-        )}
 
-        {/* Footer */}
-        <Box sx={{ mb: 0 }}>
-          {/* ... footer existant ... */}
-        </Box>
-      </Container>
-    </Box>
+          {/* Footer */}
+          <Box sx={{ mb: 0 }}>
+            {/* ... footer existant ... */}
+          </Box>
+        </Container>
+      </Box>
+    )
   );
 };
 
