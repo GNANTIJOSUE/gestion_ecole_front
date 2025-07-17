@@ -40,6 +40,7 @@ import { blue, green, orange, purple, pink } from '@mui/material/colors';
 import Registration from './Registration';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Link as RouterLink } from 'react-router-dom';
+import { RegistrationMinimal } from './Registration';
 
 const Home = () => {
   const theme = useTheme();
@@ -353,7 +354,7 @@ const Home = () => {
         <Box sx={{ maxWidth: 700, mx: 'auto', my: 4 }}>
           <ErrorBoundary>
             {showRegistration && (
-              <Registration key="direct" onClose={() => setShowRegistration(false)} />
+              <RegistrationMinimal />
             )}
           </ErrorBoundary>
         </Box>

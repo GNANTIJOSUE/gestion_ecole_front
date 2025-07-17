@@ -972,4 +972,72 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
+  const [formData, setFormData] = React.useState({
+    matricule: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: '',
+    address: '',
+    city: '',
+    phone: '',
+    email: '',
+    parentFirstName: '',
+    parentLastName: '',
+    parentPhone: '',
+    parentEmail: '',
+    parentContact: '',
+  });
+  const [error, setError] = React.useState('');
+  const isValidDateFormat = (dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.matricule || !formData.firstName || !formData.lastName || !formData.dateOfBirth || !formData.gender || !formData.address || !formData.city || !formData.phone || !formData.email || !formData.parentFirstName || !formData.parentLastName || !formData.parentPhone || !formData.parentEmail || !formData.parentContact) {
+      setError('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+    if (!isValidDateFormat(formData.dateOfBirth)) {
+      setError('La date de naissance doit être au format AAAA-MM-JJ.');
+      return;
+    }
+    setError('');
+    alert('Formulaire soumis ! (version minimaliste)');
+    if (onClose) onClose();
+  };
+  return (
+    <div style={{ padding: 8, maxWidth: 700, margin: '0 auto' }}>
+      <h2 style={{ textAlign: 'center', color: '#1976d2' }}>Inscription en ligne (simple)</h2>
+      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
+      <form onSubmit={handleSubmit} autoComplete="off">
+        <label>Matricule*<br /><input name="matricule" value={formData.matricule} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Prénom*<br /><input name="firstName" value={formData.firstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Nom*<br /><input name="lastName" value={formData.lastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Date de naissance*<br /><input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required placeholder="AAAA-MM-JJ" style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Genre*<br />
+          <select name="gender" value={formData.gender} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }}>
+            <option value="">Choisir...</option>
+            <option value="Masculin">Masculin</option>
+            <option value="Féminin">Féminin</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </label><br />
+        <label>Adresse*<br /><input name="address" value={formData.address} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Ville*<br /><input name="city" value={formData.city} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Téléphone*<br /><input name="phone" value={formData.phone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Email*<br /><input name="email" value={formData.email} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Prénom du parent*<br /><input name="parentFirstName" value={formData.parentFirstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Nom du parent*<br /><input name="parentLastName" value={formData.parentLastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Téléphone du parent*<br /><input name="parentPhone" value={formData.parentPhone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Email du parent*<br /><input name="parentEmail" value={formData.parentEmail} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Contact du parent*<br /><input name="parentContact" value={formData.parentContact} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <button type="submit" style={{ width: '100%', padding: 12, background: '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600, fontSize: 16 }}>Soumettre</button>
+      </form>
+    </div>
+  );
+}
+
 export default Registration; 
