@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Box, Container, Typography, Paper, Button, TextField, Alert, Stack, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Snackbar
+  Box, Container, Typography, Paper, Button, TextField, Alert, Stack, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Snackbar, FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -13,6 +13,25 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 // import logo from '../assets/logo192.png'; // Décommente si tu as le logo dans src/assets/
+
+const getCurrentSchoolYear = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  if (month >= 9) {
+    return `${year}-${year + 1}`;
+  } else {
+    return `${year - 1}-${year}`;
+  }
+};
+const getSchoolYears = (count = 5) => {
+  const current = getCurrentSchoolYear();
+  const startYear = parseInt(current.split('-')[0], 10);
+  return Array.from({ length: count }, (_, i) => {
+    const start = startYear - i;
+    return `${start}-${start + 1}`;
+  });
+};
 
 const StudentPaymentPage = () => {
   const [student, setStudent] = useState<any>(null);
@@ -42,6 +61,8 @@ const StudentPaymentPage = () => {
   const [numeroSend, setNumeroSend] = useState('');
   // Ajoute un état pour le message d'erreur
   const [amountError, setAmountError] = useState<string | null>(null);
+  const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYear());
+  const SCHOOL_YEARS = getSchoolYears(5);
 
   useEffect(() => {
     let isMounted = true;
@@ -51,7 +72,7 @@ const StudentPaymentPage = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       try {
-        const res = await axios.get('http://localhost:5000/api/students/me/details', {
+        const res = await axios.get(`http://schoolapp.sp-p6.com/api/students/me/details?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) {
@@ -77,7 +98,7 @@ const StudentPaymentPage = () => {
       isMounted = false;
       window.removeEventListener('focus', handleFocus);
     };
-  }, []);
+  }, [schoolYear]);
 
   // Calculs avec tous les paiements
   const totalDue = student?.total_due || 150000;
@@ -157,7 +178,7 @@ const StudentPaymentPage = () => {
       const token = localStorage.getItem('token');
       // Enregistrement du paiement dans la base de données
       const response = await axios.post(
-        'http://localhost:5000/api/payments',
+        'http://schoolapp.sp-p6.com/api/payments',
         {
           student_id: student.id,
           amount: amount,
@@ -180,7 +201,7 @@ const StudentPaymentPage = () => {
         setFusionStatusMsg(null);
       }
       // Rafraîchir la liste des paiements
-      const payRes = await axios.get('http://localhost:5000/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
+      const payRes = await axios.get('http://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
       setStudent(payRes.data.student);
       setPayments(payRes.data.student.payments || []);
       // Afficher le reçu avec les données du backend
@@ -208,7 +229,7 @@ const StudentPaymentPage = () => {
     setFusionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/payments/fusion-init', {
+      const res = await axios.post('http://schoolapp.sp-p6.com/api/payments/fusion-init', {
         student_id: student.id,
         amount: amountToPay,
         numeroSend: numeroSend
@@ -232,13 +253,13 @@ const StudentPaymentPage = () => {
     setCheckingStatus(true);
     setFusionStatusMsg(null);
     try {
-      const res = await axios.get(`http://localhost:5000/api/payments/fusion-status/${fusionToken}`);
+      const res = await axios.get(`http://schoolapp.sp-p6.com/api/payments/fusion-status/${fusionToken}`);
       setFusionStatus(res.data.statut);
       setFusionStatusMsg(res.data.message || '');
       // Si payé, rafraîchir les paiements
       if (res.data.statut === 'paid') {
         const token = localStorage.getItem('token');
-        const payRes = await axios.get('http://localhost:5000/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
+        const payRes = await axios.get('http://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
         setStudent(payRes.data.student);
         setPayments(payRes.data.student.payments || []);
         setShowReceipt(true); // Affiche le reçu seulement si payé
@@ -291,6 +312,22 @@ const StudentPaymentPage = () => {
       pt: 2
     }}>
       <Container maxWidth="md" sx={{ py: 3 }}>
+        {/* Sélecteur d'année scolaire */}
+        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel id="school-year-label">Année scolaire</InputLabel>
+            <Select
+              labelId="school-year-label"
+              value={schoolYear}
+              label="Année scolaire"
+              onChange={e => setSchoolYear(e.target.value)}
+            >
+              {SCHOOL_YEARS.map(year => (
+                <MenuItem key={year} value={year}>{year}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 4, boxShadow: '0 8px 32px rgba(0,0,0,0.10)' }}>
           <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
             <PaymentIcon color="primary" sx={{ fontSize: 40 }} />

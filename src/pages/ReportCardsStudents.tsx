@@ -52,6 +52,7 @@ type TrimesterData = {
 };
 
 const ReportCardsStudents = () => {
+  console.log('LOG TEST: ReportCardsStudents rendu');
   const { classId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -98,7 +99,7 @@ const ReportCardsStudents = () => {
   const checkPublication = async (trimester: string) => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.get('http://localhost:5000/api/report-cards/published', {
+      const res = await axios.get('http://schoolapp.sp-p6.com/api/report-cards/published', {
         params: {
           class_id: classId,
           trimester,
@@ -122,7 +123,7 @@ const ReportCardsStudents = () => {
   const handlePublish = async (trimester: string) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post('http://localhost:5000/api/report-cards/publish', {
+      await axios.post('http://schoolapp.sp-p6.com/api/report-cards/publish', {
         class_id: classId,
         trimester,
         school_year: schoolYear
@@ -148,13 +149,13 @@ const ReportCardsStudents = () => {
       }
       try {
         // Récupérer la classe
-        const classRes = await axios.get(`http://localhost:5000/api/classes/${classId}`, {
+        const classRes = await axios.get(`http://schoolapp.sp-p6.com/api/classes/${classId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!isMounted) return;
         setClassName(classRes.data.name);
         // Récupérer les étudiants de la classe pour l'année scolaire sélectionnée
-        const res = await axios.get(`http://localhost:5000/api/classes/${classId}/students?school_year=${schoolYear}`, {
+        const res = await axios.get(`http://schoolapp.sp-p6.com/api/classes/${classId}/students?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) setStudents(res.data);
@@ -176,7 +177,7 @@ const ReportCardsStudents = () => {
     setTrimestersData(prev => prev.map(t => ({ ...t, loading: true, moyenne: null, matieres: 0, bulletin: [], rang: null, appreciation: '' })));
     const token = localStorage.getItem('token');
     Promise.all(trimesters.map(trim =>
-      axios.get(`http://localhost:5000/api/students/${selectedStudent.id}/grades?school_year=${schoolYear}`, {
+      axios.get(`http://schoolapp.sp-p6.com/api/students/${selectedStudent.id}/grades?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {
         const notesTrim = res.data.filter((n: any) => n.semester === trim);
@@ -212,7 +213,7 @@ const ReportCardsStudents = () => {
   const fetchStudentNotes = async (studentId: number, year: string, trimester: string) => {
     const token = localStorage.getItem('token');
     const res = await axios.get(
-      `http://localhost:5000/api/students/${studentId}/grades?school_year=${year}`,
+      `http://schoolapp.sp-p6.com/api/students/${studentId}/grades?school_year=${year}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     setNotes(res.data.filter((n: any) => n.semester === trimester));
@@ -229,7 +230,7 @@ const ReportCardsStudents = () => {
     setEditLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/teachers/grades/${editNote.id}`, {
+      await axios.put(`http://schoolapp.sp-p6.com/api/teachers/grades/${editNote.id}`, {
         grade: parseFloat(editValue),
         coefficient: editCoeff,
         subject_id: editNote.subject_id,
@@ -251,13 +252,15 @@ const ReportCardsStudents = () => {
     if (!window.confirm('Supprimer cette note ?')) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/teachers/grades/${note.id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`http://schoolapp.sp-p6.com/api/teachers/grades/${note.id}`, { headers: { Authorization: `Bearer ${token}` } });
       setSnackbar({ open: true, message: 'Note supprimée', severity: 'success' });
       fetchStudentNotes(notesStudent.id, notesYear, notesTrimester);
     } catch (err: any) {
       setSnackbar({ open: true, message: err.response?.data?.message || 'Erreur lors de la suppression', severity: 'error' });
     }
   };
+
+  console.log('DEBUG publishedTrimesters:', publishedTrimesters);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #e3f0ff 0%, #f8e1ff 100%)' }}>

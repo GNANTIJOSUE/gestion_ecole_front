@@ -36,7 +36,7 @@ const ClassEventSelectionPage = () => {
     const fetchClasses = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/classes', {
+        const response = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (isMounted) setClasses(response.data);

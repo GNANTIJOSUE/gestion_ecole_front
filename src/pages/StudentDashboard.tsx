@@ -95,8 +95,10 @@ const StudentDashboard = () => {
   const [annualAverage, setAnnualAverage] = useState<{ moyenne_annuelle: number, rank: number, total: number } | null>(null);
   const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYear());
   const [publishedTrimesters, setPublishedTrimesters] = useState<{ [key: string]: boolean }>({});
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('DEBUG useEffect StudentDashboard déclenché');
     let isMounted = true;
     
     const fetchStudentAndNotifications = async () => {
@@ -113,7 +115,7 @@ const StudentDashboard = () => {
       try {
         // Étape 1: Récupérer les données de l'étudiant (priorité haute)
         console.log('[StudentDashboard] Étape 1: Récupération des données étudiant...');
-        const studentResponse = await axios.get('http://localhost:5000/api/auth/me', {
+        const studentResponse = await axios.get('http://schoolapp.sp-p6.com/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 15000 // Augmenté à 15 secondes pour le debug
         });
@@ -122,8 +124,41 @@ const StudentDashboard = () => {
         
         console.log('[StudentDashboard] Réponse complète de /api/auth/me:', studentResponse.data);
         console.log('[StudentDashboard] studentResponse.data.student:', studentResponse.data.student);
+        console.log('[StudentDashboard] Toute la réponse studentResponse:', studentResponse);
         setStudent(studentResponse.data.student);
-        console.log('[StudentDashboard] Données étudiant reçues:', studentResponse.data.student);
+        console.log('DEBUG studentResponse.data.student', studentResponse.data.student);
+        
+        // Vérifier que l'étudiant existe
+        if (!studentResponse.data.student) {
+          console.error('Étudiant non trouvé dans la réponse API');
+          if (isMounted) {
+            setError('Impossible de récupérer les données de l\'étudiant. Veuillez vous reconnecter.');
+            setLoading(false);
+          }
+          return;
+        }
+        
+        const studentClassId = studentResponse.data.student.class_id || studentResponse.data.student.classe_id || studentResponse.data.student.classId;
+        console.log('DEBUG studentClassId utilisé pour bulletins', studentClassId);
+        // Récupérer l'état de publication des bulletins pour chaque trimestre
+        if (studentResponse.data.student && studentClassId) {
+          const token = localStorage.getItem('token');
+          const pub: { [key: string]: boolean } = {};
+          for (const t of ['1er trimestre', '2e trimestre', '3e trimestre']) {
+            try {
+              const res = await axios.get(`http://schoolapp.sp-p6.com/api/report-cards/published?class_id=${studentClassId}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              pub[t] = !!res.data.published;
+            } catch {
+              pub[t] = false;
+            }
+          }
+          if (isMounted) {
+            setPublishedTrimesters(pub);
+            console.log('DEBUG setPublishedTrimesters', pub);
+          }
+        }
         
         // Afficher l'interface dès que l'étudiant est chargé
         if (isMounted) setLoading(false);
@@ -132,7 +167,7 @@ const StudentDashboard = () => {
         console.log('[StudentDashboard] Étape 2: Chargement en arrière-plan...');
         
         // Charger les notifications
-        axios.get('http://localhost:5000/api/events/my-notifications', {
+        axios.get('http://schoolapp.sp-p6.com/api/events/my-notifications', {
             headers: { Authorization: `Bearer ${token}` },
             timeout: 3000
         }).then(response => {
@@ -146,7 +181,7 @@ const StudentDashboard = () => {
           console.log(`[StudentDashboard] Chargement des notes récentes pour l'étudiant ID: ${studentResponse.data.student.id}`);
           setLoadingRecentGrades(true);
           
-          axios.get(`http://localhost:5000/api/students/${studentResponse.data.student.id}/grades?school_year=${schoolYear}`, {
+          axios.get(`http://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/grades?school_year=${schoolYear}`, {
             headers: { Authorization: `Bearer ${token}` },
             timeout: 8000 // Réduit à 8 secondes
           }).then(response => {
@@ -169,7 +204,7 @@ const StudentDashboard = () => {
           const fetchAnnualAverage = async () => {
             const token = localStorage.getItem('token');
             try {
-              const { data } = await axios.get(`http://localhost:5000/api/students/${studentResponse.data.student.id}/annual-average?school_year=${schoolYear}`, {
+              const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/annual-average?school_year=${schoolYear}`, {
                 headers: { Authorization: `Bearer ${token}` }
               });
               setAnnualAverage(data);
@@ -184,23 +219,6 @@ const StudentDashboard = () => {
             }
           };
           fetchAnnualAverage();
-        }
-
-        // Récupérer l'état de publication des bulletins pour chaque trimestre
-        if (studentResponse.data.student && studentResponse.data.student.class_id) {
-          const token = localStorage.getItem('token');
-          const pub: { [key: string]: boolean } = {};
-          for (const t of ['1er trimestre', '2e trimestre', '3e trimestre']) {
-            try {
-              const res = await axios.get(`http://localhost:5000/api/report-cards/published?class_id=${studentResponse.data.student.class_id}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
-                headers: { Authorization: `Bearer ${token}` }
-              });
-              pub[t] = !!res.data.published;
-            } catch {
-              pub[t] = false;
-            }
-          }
-          if (isMounted) setPublishedTrimesters(pub);
         }
 
       } catch (err) {
@@ -246,7 +264,7 @@ const StudentDashboard = () => {
     const fetchRank = async () => {
       try {
         const token = localStorage.getItem('token');
-        const url = `http://localhost:5000/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(selectedSemester)}&school_year=${schoolYear}`;
+        const url = `http://schoolapp.sp-p6.com/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(selectedSemester)}&school_year=${schoolYear}`;
         console.log('Appel API rang global:', url, 'semester:', selectedSemester);
         const { data } = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
@@ -297,7 +315,7 @@ const StudentDashboard = () => {
     setLoadingNotes(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/students/${student.id}/grades?school_year=${schoolYear}`, {
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${student.id}/grades?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 20000 // 20 secondes de timeout pour les notes complètes
       });
@@ -332,7 +350,7 @@ const StudentDashboard = () => {
   const handleMarkAsRead = async (notificationId: number) => {
     try {
         const token = localStorage.getItem('token');
-        await axios.put(`http://localhost:5000/api/events/notifications/${notificationId}/read`, {}, {
+        await axios.put(`http://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: 1 } : n));
@@ -353,7 +371,23 @@ const StudentDashboard = () => {
         </Box>
     );
   }
+
+  // Affichage de l'erreur si elle existe
+  if (error) {
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', flexDirection: 'column' }}>
+            <Alert severity="error" sx={{ mb: 2, maxWidth: 500 }}>
+                {error}
+            </Alert>
+            <Button variant="contained" onClick={handleLogout}>
+                Se reconnecter
+            </Button>
+        </Box>
+    );
+  }
   
+  // DEBUG LOG pour comprendre pourquoi la moyenne annuelle ne s'affiche pas
+  console.log('DEBUG annualAverage', annualAverage, publishedTrimesters);
   return (
     <Box sx={{
       minHeight: '100vh',

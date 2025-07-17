@@ -90,11 +90,11 @@ const SecretaryDashboard = () => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     setLoading(true);
     Promise.all([
-      axios.get(`http://localhost:5000/api/students?school_year=${schoolYear}`, { headers }), // inscrits
-      axios.get(`http://localhost:5000/api/students`, { headers }), // total
-      axios.get(`http://localhost:5000/api/classes?school_year=${schoolYear}`, { headers }),
-      axios.get(`http://localhost:5000/api/payments?school_year=${schoolYear}`, { headers }),
-      axios.get(`http://localhost:5000/api/events/all?school_year=${schoolYear}`, { headers }),
+      axios.get(`http://schoolapp.sp-p6.com/api/students?school_year=${schoolYear}`, { headers }), // inscrits
+      axios.get(`http://schoolapp.sp-p6.com/api/students`, { headers }), // total
+      axios.get(`http://schoolapp.sp-p6.com/api/classes?school_year=${schoolYear}`, { headers }),
+      axios.get(`http://schoolapp.sp-p6.com/api/payments?school_year=${schoolYear}`, { headers }),
+      axios.get(`http://schoolapp.sp-p6.com/api/events/all?school_year=${schoolYear}`, { headers }),
     ]).then(([studentsRes, totalStudentsRes, classesRes, paymentsRes, eventsRes]) => {
       const students = studentsRes.data;
       const totalStudents = totalStudentsRes.data;

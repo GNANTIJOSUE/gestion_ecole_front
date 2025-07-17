@@ -166,6 +166,12 @@ const Students = () => {
   const [showFinalizeForm, setShowFinalizeForm] = useState(false);
   const [studentToFinalize, setStudentToFinalize] = useState<any | null>(null);
 
+  // Ajout des états pour la classe précédente et son niveau
+  const [previousClass, setPreviousClass] = useState('');
+  const [previousLevel, setPreviousLevel] = useState('');
+
+  const [editSuccess, setEditSuccess] = useState<string | null>(null);
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -216,7 +222,7 @@ const Students = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/students`, {
+      const res = await axios.get(`http://schoolapp.sp-p6.com/api/students`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { school_year: schoolYear }
       });
@@ -235,7 +241,7 @@ const Students = () => {
   const fetchClasses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/classes', {
+      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data.map((c: any) => ({ ...c, level: c.level || '' })));
@@ -287,7 +293,7 @@ const Students = () => {
       (student.registration_number || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (student.last_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (student.first_name || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const scolariteDue = (student.total_due || 0) - (student.total_discount || 0);
+    const scolariteDue = (student.class_amount || 0) - (student.total_discount || 0);
     const matchScolarite = scolariteFilter === '' || scolariteDue === parseInt(scolariteFilter);
     const matchGenre = genreFilter === 'Tous' || (student.gender === 'Masculin' && genreFilter === 'Masculin') || (student.gender === 'Féminin' && genreFilter === 'Féminin');
     return matchClass && matchSearch && matchScolarite && matchGenre;
@@ -301,12 +307,13 @@ const Students = () => {
     if (window.confirm('Voulez-vous vraiment supprimer cet étudiant ?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/students/${studentId}`, {
+        await axios.delete(`http://schoolapp.sp-p6.com/api/students/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchStudents();
-      } catch (err) {
-        alert('Erreur lors de la suppression');
+      } catch (err: any) {
+        alert(err.response?.data?.message || err.message || 'Erreur lors de la suppression');
+        console.error('Erreur lors de la suppression:', err.response?.data || err);
       }
     }
   };
@@ -319,6 +326,7 @@ const Students = () => {
   const handleEditClose = () => {
     setEditOpen(false);
     setEditStudent(null);
+    setEditSuccess(null);
   };
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditStudent((prev: any) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -328,13 +336,32 @@ const Students = () => {
     setEditLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/students/${editStudent.id}`, editStudent, {
+      const payload = {
+        first_name: editStudent.first_name,
+        last_name: editStudent.last_name,
+        date_of_birth: editStudent.date_of_birth,
+        gender: editStudent.gender,
+        address: editStudent.address,
+        city: editStudent.city,
+        phone: editStudent.phone,
+        previous_school: editStudent.previous_school,
+        previous_class: editStudent.previous_class,
+        special_needs: editStudent.special_needs,
+        additional_info: editStudent.additional_info,
+        class_id: editStudent.class_id || null
+      };
+      await axios.put(`http://schoolapp.sp-p6.com/api/students/${editStudent.id}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      handleEditClose();
+      setEditSuccess('Modification enregistrée avec succès !');
       fetchStudents();
-    } catch (err) {
+      setTimeout(() => {
+        setEditSuccess(null);
+        handleEditClose();
+      }, 1500);
+    } catch (err: any) {
       alert('Erreur lors de la modification');
+      console.error(err);
     } finally {
       setEditLoading(false);
     }
@@ -344,7 +371,7 @@ const Students = () => {
   const handlePaymentOpen = (student: any) => {
     setStudentToPay({
       ...student,
-      total_due: student.total_due ?? 0,
+      class_amount: student.class_amount ?? 0,
       total_paid: student.total_paid ?? 0,
       total_discount: student.total_discount ?? 0,
     });
@@ -360,10 +387,9 @@ const Students = () => {
 
   const handlePaymentAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log('Saisie:', value); // Ajout du log pour debug
     setPaymentAmount(value);
     if (studentToPay) {
-      const totalDue = studentToPay.total_due ?? 0;
+      const totalDue = studentToPay.class_amount ?? 0;
       const totalPaid = studentToPay.total_paid ?? 0;
       const remaining = totalDue - totalPaid;
       if (Number(value) > remaining) {
@@ -380,7 +406,7 @@ const Students = () => {
       return;
     }
     // Empêcher un paiement supérieur au montant dû
-    const totalDue = studentToPay.total_due ?? 0;
+    const totalDue = studentToPay.class_amount ?? 0;
     const totalPaid = studentToPay.total_paid ?? 0;
     const remaining = totalDue - totalPaid;
     if (Number(paymentAmount) > remaining) {
@@ -396,7 +422,7 @@ const Students = () => {
         school_year: schoolYear,
         payment_method: 'cash',
       });
-      const { data } = await axios.post(`http://localhost:5000/api/payments`, {
+      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/payments`, {
         student_id: studentToPay.id,
         amount: Number(paymentAmount),
         school_year: schoolYear,
@@ -456,7 +482,7 @@ const Students = () => {
     setFinalizeLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post(`http://localhost:5000/api/students/${student.id}/finalize`, {
+      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/students/${student.id}/finalize`, {
         class_id: finalizeClassId,
         payment_amount: finalizePayment,
       }, {
@@ -561,21 +587,30 @@ const Students = () => {
     setReinscriptionStudent(null);
     setPreviousYearDue(0); // reset
     setPreviousYearPayment(''); // reset
+    setPreviousClass(''); // reset
+    setPreviousLevel(''); // reset
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/students?registration_number=${matriculeSearch}`,
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students?registration_number=${matriculeSearch}`,
         { headers: { Authorization: `Bearer ${token}` } });
       if (data && data.length > 0) {
         setReinscriptionStudent(data[0]);
         // Récupérer le total dû et payé de l'année précédente
         const prevYear = getPreviousSchoolYear();
         const [enrollmentsRes, paymentsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/students/${data[0].id}/classes?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`http://localhost:5000/api/students/${data[0].id}/payments?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`http://schoolapp.sp-p6.com/api/students/${data[0].id}/classes?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`http://schoolapp.sp-p6.com/api/students/${data[0].id}/payments?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         let totalDue = 0;
         if (enrollmentsRes.data && enrollmentsRes.data.length > 0) {
+          setPreviousClass(enrollmentsRes.data[0].name || '');
+          // Trouver le niveau de la classe précédente dans la liste des classes
+          const prevClassObj = classes.find(c => c.name === enrollmentsRes.data[0].name);
+          setPreviousLevel(prevClassObj?.level || '');
           totalDue = enrollmentsRes.data[0].amount || 0;
+        } else {
+          setPreviousClass('');
+          setPreviousLevel('');
         }
         let totalPaid = 0;
         if (paymentsRes.data && paymentsRes.data.length > 0) {
@@ -610,7 +645,7 @@ const Students = () => {
           return;
         }
         // Paiement du reliquat
-        await axios.post(`http://localhost:5000/api/payments`, {
+        await axios.post(`http://schoolapp.sp-p6.com/api/payments`, {
           student_id: reinscriptionStudent.id,
           amount: previousYearPayment,
           school_year: getPreviousSchoolYear(),
@@ -618,7 +653,7 @@ const Students = () => {
         }, { headers: { Authorization: `Bearer ${token}` } });
       }
       // Réinscription pour la nouvelle année
-      const { data } = await axios.post(`http://localhost:5000/api/students/${reinscriptionStudent.id}/reinscription`, {
+      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/reinscription`, {
         class_id: reinscriptionClassId,
         payment_amount: reinscriptionPayment,
         school_year: schoolYear,
@@ -671,7 +706,7 @@ const Students = () => {
       if (reinscriptionStudent) {
         try {
           const token = localStorage.getItem('token');
-          const { data } = await axios.get(`http://localhost:5000/api/students/${reinscriptionStudent.id}/annual-average`, {
+          const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/annual-average`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           // Admis si moyenne >= 10
@@ -686,33 +721,19 @@ const Students = () => {
     fetchAnnualAverage();
   }, [reinscriptionStudent]);
 
-  // Calcul du niveau suivant et du niveau cible pour la réinscription
+  // Calcul du niveau cible pour la réinscription à partir du niveau de la classe précédente
   useEffect(() => {
-    if (reinscriptionStudent && annualAverage) {
-      // On récupère le niveau actuel depuis la classe ou le champ level
-      let niveauActuel = reinscriptionStudent.level;
-      if (!niveauActuel && reinscriptionStudent.classe) {
-        // Extrait le niveau même s'il y a des espaces (ex: "4 ème 1" => "4ème")
-        const match = reinscriptionStudent.classe.match(/^((\d+)\s*ème|Seconde|Première|Terminale)/i);
-        niveauActuel = match ? match[1].replace(/\s+/g, '') : "";
-      }
-      const index = niveaux.findIndex(n => n.toLowerCase() === niveauActuel.toLowerCase());
-      let suivant = niveauActuel;
+    if (previousLevel && annualAverage) {
+      const index = niveaux.findIndex(n => n.toLowerCase() === previousLevel.toLowerCase());
+      let target = previousLevel;
       if (annualAverage.isAdmis && index >= 0 && index < niveaux.length - 1) {
-        suivant = niveaux[index + 1];
+        target = niveaux[index + 1];
       }
-      setNextLevel(suivant);
-      // Correction : niveau cible pour la réinscription
-      if (annualAverage.isAdmis && index >= 0 && index < niveaux.length - 1) {
-        setTargetLevel(niveaux[index + 1]);
-      } else {
-        setTargetLevel(niveauActuel);
-      }
+      setTargetLevel(target);
     } else {
-      setNextLevel("");
-      setTargetLevel("");
+      setTargetLevel('');
     }
-  }, [reinscriptionStudent, annualAverage]);
+  }, [previousLevel, annualAverage]);
 
   // Filtrer les classes du niveau cible (redoublement ou passage)
   const classesNiveauCible = targetLevel ? classes.filter(c => c.level && c.level.toLowerCase() === targetLevel.toLowerCase()) : classes;
@@ -794,7 +815,7 @@ const Students = () => {
   const handleShowReceipt = async (paymentId: number | string) => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/payments/${paymentId}/receipt`, {
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/payments/${paymentId}/receipt`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPaymentReceiptData(data);
@@ -1020,7 +1041,7 @@ const Students = () => {
                         {filteredStudents
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((student) => {
-                            const remaining = (student.total_due || 0) - (student.total_discount || 0) - (student.total_paid || 0);
+                            const remaining = (student.class_amount || 0) - (student.total_discount || 0) - (student.total_paid || 0);
                             const isToFinalize = student.registration_mode === 'online' || student.registration_status === 'online' || !student.classe;
                             
                             // Log pour debug
@@ -1128,140 +1149,148 @@ const Students = () => {
               <Dialog open={editOpen} onClose={handleEditClose} maxWidth="sm" fullWidth>
                 <DialogTitle>Modifier l'étudiant</DialogTitle>
                 <DialogContent>
-                  {editStudent && (
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Prénom"
-                          name="first_name"
-                          value={editStudent.first_name || editStudent.nom || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
+                  {editSuccess ? (
+                    <Box sx={{ mb: 2, minHeight: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Typography color="success.main" sx={{ fontWeight: 'bold', fontSize: 18 }}>{editSuccess}</Typography>
+                    </Box>
+                  ) : (
+                    editStudent && (
+                      <Grid container spacing={2} sx={{ mt: 1 }}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Prénom"
+                            name="first_name"
+                            value={editStudent.first_name || editStudent.nom || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Nom"
+                            name="last_name"
+                            value={editStudent.last_name || editStudent.prenom || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Date de naissance"
+                            name="date_of_birth"
+                            value={editStudent.date_of_birth || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth>
+                            <InputLabel id="edit-gender-label">Genre</InputLabel>
+                            <Select
+                              labelId="edit-gender-label"
+                              name="gender"
+                              value={editStudent.gender || ''}
+                              label="Genre"
+                              onChange={(e) => setEditStudent((prev: any) => ({ ...prev, gender: e.target.value }))}
+                            >
+                              <MenuItem value="M">Masculin</MenuItem>
+                              <MenuItem value="F">Féminin</MenuItem>
+                              <MenuItem value="Other">Autre</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            label="Adresse"
+                            name="address"
+                            value={editStudent.address || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Ville"
+                            name="city"
+                            value={editStudent.city || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Téléphone"
+                            name="phone"
+                            value={editStudent.phone || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="École précédente"
+                            name="previous_school"
+                            value={editStudent.previous_school || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Classe précédente"
+                            name="previous_class"
+                            value={editStudent.previous_class || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth>
+                            <InputLabel>Classe</InputLabel>
+                            <Select
+                              name="class_id"
+                              value={editStudent.class_id || ''}
+                              label="Classe"
+                              onChange={(e) => setEditStudent((prev: any) => ({ ...prev, class_id: e.target.value }))}
+                            >
+                              <MenuItem value="">
+                                <em>Non assigné</em>
+                              </MenuItem>
+                              {classes.map((c) => (
+                                <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            label="Besoins particuliers"
+                            name="special_needs"
+                            value={editStudent.special_needs || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            label="Informations supplémentaires"
+                            name="additional_info"
+                            value={editStudent.additional_info || ''}
+                            onChange={handleEditChange}
+                            fullWidth
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Nom"
-                          name="last_name"
-                          value={editStudent.last_name || editStudent.prenom || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Date de naissance"
-                          name="date_of_birth"
-                          value={editStudent.date_of_birth || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth>
-                          <InputLabel id="edit-gender-label">Genre</InputLabel>
-                          <Select
-                            labelId="edit-gender-label"
-                            name="gender"
-                            value={editStudent.gender || ''}
-                            label="Genre"
-                            onChange={(e) => setEditStudent((prev: any) => ({ ...prev, gender: e.target.value }))}
-                          >
-                            <MenuItem value="M">Masculin</MenuItem>
-                            <MenuItem value="F">Féminin</MenuItem>
-                            <MenuItem value="Other">Autre</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          label="Adresse"
-                          name="address"
-                          value={editStudent.address || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Ville"
-                          name="city"
-                          value={editStudent.city || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Téléphone"
-                          name="phone"
-                          value={editStudent.phone || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="École précédente"
-                          name="previous_school"
-                          value={editStudent.previous_school || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Classe précédente"
-                          name="previous_class"
-                          value={editStudent.previous_class || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth>
-                          <InputLabel>Classe</InputLabel>
-                          <Select
-                            name="class_id"
-                            value={editStudent.class_id || ''}
-                            label="Classe"
-                            onChange={(e) => setEditStudent((prev: any) => ({ ...prev, class_id: e.target.value }))}
-                          >
-                            <MenuItem value="">
-                              <em>Non assigné</em>
-                            </MenuItem>
-                            {classes.map((c) => (
-                              <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="Besoins particuliers"
-                          name="special_needs"
-                          value={editStudent.special_needs || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          label="Informations supplémentaires"
-                          name="additional_info"
-                          value={editStudent.additional_info || ''}
-                          onChange={handleEditChange}
-                          fullWidth
-                        />
-                      </Grid>
-                    </Grid>
+                    )
                   )}
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleEditClose} color="secondary">Annuler</Button>
-                  <Button onClick={handleEditSubmit} color="primary" variant="contained" disabled={editLoading}>
-                    {editLoading ? 'Enregistrement...' : 'Enregistrer'}
-                  </Button>
+                  <Button onClick={handleEditClose} color="secondary">Fermer</Button>
+                  {!editSuccess && (
+                    <Button onClick={handleEditSubmit} color="primary" variant="contained" disabled={editLoading}>
+                      {editLoading ? 'Enregistrement...' : 'Enregistrer'}
+                    </Button>
+                  )}
                 </DialogActions>
               </Dialog>
 
@@ -1274,7 +1303,7 @@ const Students = () => {
                       <Typography variant="h6">{`${studentToPay.first_name} ${studentToPay.last_name}`}</Typography>
                       <Typography color="text.secondary" gutterBottom>Matricule: {studentToPay.registration_number}</Typography>
                        <Typography color="error" sx={{mt: 2}}>
-                        Reste à payer: <b>{(((studentToPay?.total_due ?? 0) - (studentToPay?.total_discount ?? 0) - (studentToPay?.total_paid ?? 0)).toLocaleString('fr-FR'))} F CFA</b>
+                        Reste à payer: <b>{(((studentToPay?.class_amount ?? 0) - (studentToPay?.total_discount ?? 0) - (studentToPay?.total_paid ?? 0)).toLocaleString('fr-FR'))} F CFA</b>
                       </Typography>
                       
                       <TextField
@@ -1693,6 +1722,22 @@ const Students = () => {
                           <Grid item xs={12} sm={6}><TextField label="Email du parent" name="parent_email" value={parentFields.parent_email} onChange={handleParentFieldChange} fullWidth /></Grid>
                           <Grid item xs={12}><TextField label="Contact du parent" name="parent_contact" value={parentFields.parent_contact} onChange={handleParentFieldChange} fullWidth /></Grid>
                         </Grid>
+                        {/* Affichage de la classe précédente et statut admission/doublant */}
+                        <Box sx={{ mt: 3 }}>
+                          <TextField
+                            label="Classe précédente"
+                            value={previousClass}
+                            fullWidth
+                            disabled
+                          />
+                          {annualAverage && (
+                            <Typography variant="caption" color={annualAverage.isAdmis ? 'success.main' : 'error.main'}>
+                              {annualAverage.isAdmis
+                                ? 'Admis en classe supérieure (choisissez une classe du niveau supérieur)'
+                                : 'Non admis, redoublement (choisissez une classe du même niveau)'}
+                            </Typography>
+                          )}
+                        </Box>
                         <FormControl fullWidth sx={{ mt: 3 }}>
                           <InputLabel>Nouvelle classe</InputLabel>
                           <Select

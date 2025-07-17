@@ -98,7 +98,7 @@ const Teachers = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/teachers', {
+      const res = await axios.get('http://schoolapp.sp-p6.com/api/teachers', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTeachers(res.data);
@@ -112,7 +112,7 @@ const Teachers = () => {
   const fetchSubjects = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/subjects', {
+      const res = await axios.get('http://schoolapp.sp-p6.com/api/subjects', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubjects(res.data);
@@ -125,7 +125,7 @@ const Teachers = () => {
   const fetchClasses = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/classes', {
+      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data);
@@ -210,11 +210,11 @@ const Teachers = () => {
         subject_ids: formData.subject_ids.map((id: string) => Number(id)),
       };
       if (editModalOpen && selectedTeacher) {
-        await axios.put(`http://localhost:5000/api/teachers/${selectedTeacher.id}`, dataToSend, {
+        await axios.put(`http://schoolapp.sp-p6.com/api/teachers/${selectedTeacher.id}`, dataToSend, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post('http://localhost:5000/api/teachers', dataToSend, {
+        await axios.post('http://schoolapp.sp-p6.com/api/teachers', dataToSend, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -234,7 +234,7 @@ const Teachers = () => {
     if (window.confirm('Voulez-vous vraiment supprimer ce professeur ?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/teachers/${teacherId}`, {
+        await axios.delete(`http://schoolapp.sp-p6.com/api/teachers/${teacherId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchTeachers();

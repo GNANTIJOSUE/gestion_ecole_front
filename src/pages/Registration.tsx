@@ -341,7 +341,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         parent_contact: formData.parentContact,
       };
 
-      const response = await axios.post('http://localhost:5000/api/students/public-register', payload);
+      const response = await axios.post('http://schoolapp.sp-p6.com/api/students/public-register', payload);
       const now = new Date();
       setReceiptData({
         ...payload,

@@ -99,7 +99,7 @@ const TeacherDashboard = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user.role === 'teacher') {
       const token = localStorage.getItem('token');
-      axios.get('http://localhost:5000/api/teachers/me', {
+      axios.get('http://schoolapp.sp-p6.com/api/teachers/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -138,7 +138,7 @@ const TeacherDashboard = () => {
   const fetchMySubjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/teachers/${teacher?.id}/subjects`, {
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/teachers/${teacher?.id}/subjects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Matières récupérées:', data);
@@ -163,7 +163,7 @@ const TeacherDashboard = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/teachers/${teacher?.id}/subjects/${subject.id}/classes`, {
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/teachers/${teacher?.id}/subjects/${subject.id}/classes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubjectClasses(data);
@@ -188,13 +188,13 @@ const TeacherDashboard = () => {
         return;
       }
       console.log('Chargement des données pour la classe:', classe.id, 'matière:', selectedSubject);
-      const studentsPromise = axios.get(`http://localhost:5000/api/classes/${classe.id}/students`, { 
+      const studentsPromise = axios.get(`http://schoolapp.sp-p6.com/api/classes/${classe.id}/students`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
-      const gradesPromise = axios.get(`http://localhost:5000/api/classes/${classe.id}/grades?subject_id=${selectedSubject}`, { 
+      const gradesPromise = axios.get(`http://schoolapp.sp-p6.com/api/classes/${classe.id}/grades?subject_id=${selectedSubject}`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
-      const absencesPromise = axios.get(`http://localhost:5000/api/absences?class_id=${classe.id}&subject_id=${selectedSubject}`, { 
+      const absencesPromise = axios.get(`http://schoolapp.sp-p6.com/api/absences?class_id=${classe.id}&subject_id=${selectedSubject}`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
       const [studentsRes, gradesRes, absencesRes] = await Promise.all([studentsPromise, gradesPromise, absencesPromise]);
@@ -271,7 +271,7 @@ const TeacherDashboard = () => {
 
       if (editMode && editingGradeId) {
         const response = await axios.put(
-          `http://localhost:5000/api/teachers/grades/${editingGradeId}`, 
+          `http://schoolapp.sp-p6.com/api/teachers/grades/${editingGradeId}`, 
           payload, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -279,7 +279,7 @@ const TeacherDashboard = () => {
         setSnackbar({ open: true, message: 'Note modifiée avec succès !', severity: 'success' });
       } else {
         const response = await axios.post(
-          'http://localhost:5000/api/teachers/grades', 
+          'http://schoolapp.sp-p6.com/api/teachers/grades', 
           payload, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -334,7 +334,7 @@ const TeacherDashboard = () => {
         return;
       }
 
-      await axios.delete(`http://localhost:5000/api/teachers/grades/${id}`, { 
+      await axios.delete(`http://schoolapp.sp-p6.com/api/teachers/grades/${id}`, { 
         headers: { Authorization: `Bearer ${token}` } 
       });
       

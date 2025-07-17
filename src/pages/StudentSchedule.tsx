@@ -92,7 +92,7 @@ const StudentSchedule = () => {
     const fetchSchedule = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/api/students/${studentId}/schedule?school_year=${schoolYear}`, {
+        const response = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentId}/schedule?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) {

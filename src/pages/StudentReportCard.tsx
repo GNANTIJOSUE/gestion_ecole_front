@@ -81,12 +81,12 @@ const StudentReportCard = () => {
         return;
       }
       try {
-        const studentRes = await axios.get(`http://localhost:5000/api/students/${studentId}?school_year=${schoolYear}`, {
+        const studentRes = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentId}?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!isMounted) return;
         setStudent(studentRes.data);
-        const gradesRes = await axios.get(`http://localhost:5000/api/students/${studentId}/grades?school_year=${schoolYear}`, {
+        const gradesRes = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentId}/grades?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) {
@@ -115,7 +115,7 @@ const StudentReportCard = () => {
       try {
         const token = localStorage.getItem('token');
         const { data } = await axios.get(
-          `http://localhost:5000/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(semester)}&school_year=${schoolYear}`,
+          `http://schoolapp.sp-p6.com/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(semester)}&school_year=${schoolYear}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setTrimesterRank(data);

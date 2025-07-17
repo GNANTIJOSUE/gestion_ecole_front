@@ -71,7 +71,7 @@ const FinalizeRegistration = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:5000/api/students/online-registrations', {
+      const { data } = await axios.get('http://schoolapp.sp-p6.com/api/students/online-registrations', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRegistrations(data);
@@ -85,7 +85,7 @@ const FinalizeRegistration = () => {
   const fetchClasses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:5000/api/classes', {
+      const { data } = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(data);
@@ -129,7 +129,7 @@ const FinalizeRegistration = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:5000/api/students/${selectedStudent.id}/finalize`, {
+      await axios.post(`http://schoolapp.sp-p6.com/api/students/${selectedStudent.id}/finalize`, {
         class_id: selectedClass,
         payment_amount: paymentAmount
       }, {

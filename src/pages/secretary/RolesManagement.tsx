@@ -48,7 +48,7 @@ const RolesManagement = () => {
   const loadAdmins = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/auth/admins', {
+      const response = await axios.get('http://schoolapp.sp-p6.com/api/auth/admins', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setAdmins(response.data.data);
@@ -91,7 +91,7 @@ const RolesManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/auth/register-admin', form, {
+      const response = await axios.post('http://schoolapp.sp-p6.com/api/auth/register-admin', form, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ const RolesManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/auth/admins/${editingAdmin.id}`, editForm, {
+      const response = await axios.put(`http://schoolapp.sp-p6.com/api/auth/admins/${editingAdmin.id}`, editForm, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -185,7 +185,7 @@ const RolesManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.delete(`http://localhost:5000/api/auth/admins/${admin.id}`, {
+      const response = await axios.delete(`http://schoolapp.sp-p6.com/api/auth/admins/${admin.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 

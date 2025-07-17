@@ -60,7 +60,7 @@ const StudentPayment = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const res = await axios.get('http://localhost:5000/api/students/me/details', {
+        const res = await axios.get('http://schoolapp.sp-p6.com/api/students/me/details', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const s = res.data.student || res.data;

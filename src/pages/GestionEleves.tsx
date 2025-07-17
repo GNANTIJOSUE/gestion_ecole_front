@@ -61,7 +61,7 @@ const GestionEleves = () => {
                 quartier: currentFilters.quartier || undefined,
                 school_year: schoolYear
             };
-            const response = await axios.get('http://localhost:5000/api/students', { headers, params });
+            const response = await axios.get('http://schoolapp.sp-p6.com/api/students', { headers, params });
             console.log('Données brutes des étudiants reçues:', response.data);
             setStudents(response.data);
         } catch (error) {
@@ -81,8 +81,8 @@ const GestionEleves = () => {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
                 
-                const classesPromise = axios.get('http://localhost:5000/api/classes', { headers });
-                const studentsPromise = axios.get('http://localhost:5000/api/students', { headers, params: { school_year: schoolYear } });
+                const classesPromise = axios.get('http://schoolapp.sp-p6.com/api/classes', { headers });
+                const studentsPromise = axios.get('http://schoolapp.sp-p6.com/api/students', { headers, params: { school_year: schoolYear } });
                 
                 const [classesRes, studentsRes] = await Promise.all([classesPromise, studentsPromise]);
 

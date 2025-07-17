@@ -26,7 +26,7 @@ const StudentPaymentReturn = () => {
     setChecking(true);
     setMsg(null);
     try {
-      const res = await axios.get(`http://localhost:5000/api/payments/fusion-status/${token}`);
+      const res = await axios.get(`http://schoolapp.sp-p6.com/api/payments/fusion-status/${token}`);
       setStatus(res.data.statut);
       setMsg(res.data.message || '');
       setPaymentDetails(res.data.details || null);
@@ -58,7 +58,7 @@ const StudentPaymentReturn = () => {
         setChecking(true);
         setMsg(null);
         try {
-          const res = await axios.get(`http://localhost:5000/api/payments/fusion-status/${token}`);
+          const res = await axios.get(`http://schoolapp.sp-p6.com/api/payments/fusion-status/${token}`);
           if (isMounted) {
             setStatus(res.data.statut);
             setMsg(res.data.message || '');

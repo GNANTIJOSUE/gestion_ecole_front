@@ -198,9 +198,9 @@ const Discounts: React.FC = () => {
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
             const [discountTypesRes, studentDiscountsRes, studentsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/discounts/types'),
-                axios.get(`http://localhost:5000/api/discounts?school_year=${schoolYear}`, { headers }),
-                axios.get(`http://localhost:5000/api/students?school_year=${schoolYear}`, { headers })
+                axios.get('http://schoolapp.sp-p6.com/api/discounts/types'),
+                axios.get(`http://schoolapp.sp-p6.com/api/discounts?school_year=${schoolYear}`, { headers }),
+                axios.get(`http://schoolapp.sp-p6.com/api/students?school_year=${schoolYear}`, { headers })
             ]);
 
             setDiscountTypes(discountTypesRes.data);
@@ -231,7 +231,7 @@ const Discounts: React.FC = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             
-            const response = await axios.post('http://localhost:5000/api/discounts/student', {
+            const response = await axios.post('http://schoolapp.sp-p6.com/api/discounts/student', {
                 ...discountForm,
                 school_year: schoolYear // <-- toujours envoyer l'année scolaire sélectionnée
             }, { headers });
@@ -255,7 +255,7 @@ const Discounts: React.FC = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             
-            await axios.post('http://localhost:5000/api/discounts/types', typeForm, { headers });
+            await axios.post('http://schoolapp.sp-p6.com/api/discounts/types', typeForm, { headers });
             setSnackbar({ open: true, message: 'Type de réduction créé avec succès', severity: 'success' });
             setOpenTypeDialog(false);
             resetTypeForm();
@@ -292,7 +292,7 @@ const Discounts: React.FC = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             
-            await axios.put(`http://localhost:5000/api/discounts/${discountId}/approve`, {
+            await axios.put(`http://schoolapp.sp-p6.com/api/discounts/${discountId}/approve`, {
                 approved_by: 1 // ID de l'utilisateur connecté (à adapter)
             }, { headers });
             setSnackbar({ open: true, message: 'Bon/prise en charge approuvé', severity: 'success' });
@@ -311,7 +311,7 @@ const Discounts: React.FC = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             
-            await axios.put(`http://localhost:5000/api/discounts/${discountId}/deactivate`, {}, { headers });
+            await axios.put(`http://schoolapp.sp-p6.com/api/discounts/${discountId}/deactivate`, {}, { headers });
             setSnackbar({ open: true, message: 'Bon/prise en charge désactivé', severity: 'success' });
             fetchData();
         } catch (error) {
@@ -354,7 +354,7 @@ const Discounts: React.FC = () => {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             
-            const response = await axios.get(`http://localhost:5000/api/discounts/student/${studentId}/info`, { headers });
+            const response = await axios.get(`http://schoolapp.sp-p6.com/api/discounts/student/${studentId}/info`, { headers });
             setSelectedStudentInfo(response.data);
         } catch (error) {
             console.error('Erreur lors de la récupération des informations de l\'étudiant:', error);
@@ -1239,7 +1239,7 @@ const Discounts: React.FC = () => {
                                                     try {
                                                         const token = localStorage.getItem('token');
                                                         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-                                                        const res = await axios.post('http://localhost:5000/api/discounts/types', { name }, { headers });
+                                                        const res = await axios.post('http://schoolapp.sp-p6.com/api/discounts/types', { name }, { headers });
                                                         await fetchData();
                                                         const created = res.data.id;
                                                         setDiscountForm({ ...discountForm, discount_type_id: String(created) });
@@ -1256,7 +1256,7 @@ const Discounts: React.FC = () => {
                                                     try {
                                                         const token = localStorage.getItem('token');
                                                         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-                                                        const res = await axios.post('http://localhost:5000/api/discounts/types', { name }, { headers });
+                                                        const res = await axios.post('http://schoolapp.sp-p6.com/api/discounts/types', { name }, { headers });
                                                         await fetchData();
                                                         const created = res.data.id;
                                                         setDiscountForm({ ...discountForm, discount_type_id: String(created) });

@@ -40,7 +40,7 @@ const ScheduleTab = ({ childId, schoolYear }: { childId: string | undefined, sch
     const fetchSchedule = async () => {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/students/${childId}/schedule?school_year=${schoolYear}`, {
+      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/schedule?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSchedule(data.schedule || []);

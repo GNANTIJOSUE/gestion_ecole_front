@@ -44,7 +44,7 @@ const MyReportCard = () => {
       
       try {
         // 1. Charger l'étudiant d'abord
-        const studentRes = await axios.get('http://localhost:5000/api/students/me', {
+        const studentRes = await axios.get('http://schoolapp.sp-p6.com/api/students/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!isMounted) return;
@@ -66,7 +66,7 @@ const MyReportCard = () => {
         // 3. Vérifier la publication du bulletin
         let pubRes;
         try {
-          pubRes = await axios.get('http://localhost:5000/api/report-cards/published', {
+          pubRes = await axios.get('http://schoolapp.sp-p6.com/api/report-cards/published', {
             params: {
               class_id,
               trimester,
@@ -88,7 +88,7 @@ const MyReportCard = () => {
         }
 
         // 4. Récupérer toutes les notes de l'étudiant
-        const gradesRes = await axios.get(`http://localhost:5000/api/students/${studentRes.data.student.id}/grades`, {
+        const gradesRes = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentRes.data.student.id}/grades`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) {
@@ -103,7 +103,7 @@ const MyReportCard = () => {
         // 5. Récupérer le rang global du trimestre
         if (typeof trimester === 'string') {
           const rankRes = await axios.get(
-            `http://localhost:5000/api/students/${studentRes.data.student.id}/trimester-rank?semester=${encodeURIComponent(trimester)}`,
+            `http://schoolapp.sp-p6.com/api/students/${studentRes.data.student.id}/trimester-rank?semester=${encodeURIComponent(trimester)}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           if (isMounted) {

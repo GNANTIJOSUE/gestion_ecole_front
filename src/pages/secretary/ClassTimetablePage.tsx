@@ -116,7 +116,7 @@ const ClassTimetablePage = () => {
     try {
       // Fetch subjects
       try {
-        const subjectsRes = await axios.get('http://localhost:5000/api/subjects', { headers: { Authorization: `Bearer ${token}` } });
+        const subjectsRes = await axios.get('http://schoolapp.sp-p6.com/api/subjects', { headers: { Authorization: `Bearer ${token}` } });
         setSubjects(subjectsRes.data);
       } catch (err) {
         console.error("Erreur fetch subjects:", err);
@@ -125,7 +125,7 @@ const ClassTimetablePage = () => {
       
       // Fetch teachers
       try {
-        const teachersRes = await axios.get('http://localhost:5000/api/teachers', { headers: { Authorization: `Bearer ${token}` } });
+        const teachersRes = await axios.get('http://schoolapp.sp-p6.com/api/teachers', { headers: { Authorization: `Bearer ${token}` } });
         setTeachers(teachersRes.data);
       } catch (err) {
         console.error("Erreur fetch teachers:", err);
@@ -150,12 +150,12 @@ const ClassTimetablePage = () => {
 
     try {
       // 1. Fetch class details (critical)
-      const classRes = await axios.get(`http://localhost:5000/api/classes/${classId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const classRes = await axios.get(`http://schoolapp.sp-p6.com/api/classes/${classId}`, { headers: { Authorization: `Bearer ${token}` } });
       setClassDetails(classRes.data);
 
       // 2. Fetch schedule (non-critical, can be empty)
       try {
-        const scheduleRes = await axios.get(`http://localhost:5000/api/schedules/class/${classId}?school_year=${schoolYear}`,
+        const scheduleRes = await axios.get(`http://schoolapp.sp-p6.com/api/schedules/class/${classId}?school_year=${schoolYear}`,
           { headers: { Authorization: `Bearer ${token}` } });
         const formattedSchedule = scheduleRes.data.map((item: any) => ({
           ...item,
@@ -242,11 +242,11 @@ const ClassTimetablePage = () => {
 
     try {
         if(selectedSlot.id) { // Update
-            const response = await axios.put(`http://localhost:5000/api/schedules/${selectedSlot.id}`, body, { headers: { Authorization: `Bearer ${token}` } });
+            const response = await axios.put(`http://schoolapp.sp-p6.com/api/schedules/${selectedSlot.id}`, body, { headers: { Authorization: `Bearer ${token}` } });
             await fetchTimetable(token!); // Refetch on update is fine
             setSuccess(response.data.message || "Opération réussie !");
         } else { // Create
-            const response = await axios.post('http://localhost:5000/api/schedules', body, { headers: { Authorization: `Bearer ${token}` } });
+            const response = await axios.post('http://schoolapp.sp-p6.com/api/schedules', body, { headers: { Authorization: `Bearer ${token}` } });
             const newEntry: ScheduleEntry = {
                 subject_id: body.subject_id!,
                 teacher_id: body.teacher_id!,
@@ -272,7 +272,7 @@ const ClassTimetablePage = () => {
       if(!window.confirm("Êtes-vous sûr de vouloir supprimer ce cours ?")) return;
       const token = localStorage.getItem('token');
       try {
-          const response = await axios.delete(`http://localhost:5000/api/schedules/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+          const response = await axios.delete(`http://schoolapp.sp-p6.com/api/schedules/${id}`, { headers: { Authorization: `Bearer ${token}` } });
           setSchedule(prev => prev.filter(entry => entry.id !== id));
           setSuccess(response.data.message || "Suppression réussie !");
           handleClearForm();
@@ -285,7 +285,7 @@ const ClassTimetablePage = () => {
     if (!classDetails) return;
     const token = localStorage.getItem('token');
     try {
-      await axios.put(`http://localhost:5000/api/classes/${classDetails.id}/publish-timetable`, {}, {
+      await axios.put(`http://schoolapp.sp-p6.com/api/classes/${classDetails.id}/publish-timetable`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClassDetails(prev => prev ? { ...prev, timetable_published: true } : null);
@@ -362,7 +362,7 @@ const ClassTimetablePage = () => {
     if (!token) return;
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/subjects/${subjectId}/teachers`,
+        `http://schoolapp.sp-p6.com/api/subjects/${subjectId}/teachers`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSubjectTeachers(prev => ({ ...prev, [subjectId]: data }));

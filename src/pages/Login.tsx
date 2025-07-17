@@ -56,7 +56,7 @@ const Login = () => {
     }
     try {
       // Connexion élève/prof
-      const response = await axios.post('http://localhost:5000/api/auth/login-code', {
+      const response = await axios.post('http://schoolapp.sp-p6.com/api/auth/login-code', {
         code: formData.code,
         name: formData.name,
       });
@@ -79,7 +79,7 @@ const Login = () => {
     } catch (error: any) {
       // Connexion parent si échec
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/login-parent-code', {
+        const response = await axios.post('http://schoolapp.sp-p6.com/api/auth/login-parent-code', {
           code: formData.code,
           name: formData.name,
         });

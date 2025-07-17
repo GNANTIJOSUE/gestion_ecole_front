@@ -619,9 +619,14 @@ const TeacherDashboard = () => {
   // Utilitaire pour parser une note ou une moyenne
   const parseNote = (val: any) => {
     if (typeof val === 'string') {
-      // Si c'est du type "14h00" ou "14:00"
-      const match = val.match(/^([0-9]+)(?:[h:][0-9]*)?$/);
-      if (match) return parseFloat(match[1]);
+      // Si c'est du type "14:00:00" ou "14:00"
+      if (val.includes(':')) {
+        return parseFloat(val.split(':')[0]);
+      }
+      // Si c'est du type "14h00"
+      if (val.includes('h')) {
+        return parseFloat(val.split('h')[0]);
+      }
       return parseFloat(val.replace(',', '.'));
     }
     return Number(val);
@@ -930,6 +935,7 @@ const TeacherDashboard = () => {
                         {processedStudents.map((row, idx) => {
                           const trimIdx = trimestres.indexOf(selectedTrimester);
                           const { notes, moyenne } = row.notesByTrim[trimIdx];
+                          console.log('DEBUG moyenne affichée', moyenne, typeof moyenne, row.student.first_name, row.student.last_name);
                           return (
                             <TableRow
                               key={row.student.id}

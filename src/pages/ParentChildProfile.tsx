@@ -66,8 +66,8 @@ const PaiementDialog = ({ open, onClose, childId, schoolYear }: { open: boolean,
       try {
         const token = localStorage.getItem('token');
         const [paymentsRes, studentRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/students/${childId}/payments?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`http://localhost:5000/api/students/${childId}?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/payments?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         setPayments(paymentsRes.data);
         setStudent(studentRes.data);
@@ -91,7 +91,7 @@ const PaiementDialog = ({ open, onClose, childId, schoolYear }: { open: boolean,
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/payments', {
+      const res = await axios.post('http://schoolapp.sp-p6.com/api/payments', {
         student_id: childId,
         amount: payment.amount,
         monnaie_fusion_account: fusionAccounts[payment.id] || '',
@@ -123,7 +123,7 @@ const PaiementDialog = ({ open, onClose, childId, schoolYear }: { open: boolean,
     try {
       const token = localStorage.getItem('token');
       const amountToPay = Number(customAmount);
-      const res = await axios.post('http://localhost:5000/api/payments', {
+      const res = await axios.post('http://schoolapp.sp-p6.com/api/payments', {
         student_id: childId,
         amount: amountToPay,
         monnaie_fusion_account: fusionAccount
@@ -375,7 +375,7 @@ const ParentChildProfile = () => {
   const markNotificationAsRead = async (notificationId: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/events/notifications/${notificationId}/read`, {}, {
+      await axios.put(`http://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Mettre à jour l'état local
@@ -392,7 +392,7 @@ const ParentChildProfile = () => {
   const markAllNotificationsAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5000/api/events/notifications/read-all', {}, {
+      await axios.put('http://schoolapp.sp-p6.com/api/events/notifications/read-all', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Mettre à jour l'état local
@@ -411,7 +411,7 @@ const ParentChildProfile = () => {
       if (!childId) return;
       const token = localStorage.getItem('token');
       try {
-        const { data } = await axios.get('http://localhost:5000/api/events/my-notifications', {
+        const { data } = await axios.get('http://schoolapp.sp-p6.com/api/events/my-notifications', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const absNotifs = data.filter(
@@ -449,7 +449,7 @@ const ParentChildProfile = () => {
     const fetchAnnualAverage = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`http://localhost:5000/api/students/${childId}/annual-average?school_year=${schoolYear}`, {
+        const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/annual-average?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAnnualAverage(data);
@@ -466,7 +466,7 @@ const ParentChildProfile = () => {
     const fetchClassId = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`http://localhost:5000/api/students/${childId}?school_year=${schoolYear}`, {
+        const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStudentClassId(data.class_id);
@@ -486,7 +486,7 @@ const ParentChildProfile = () => {
       const results: { [key: string]: boolean } = {};
       await Promise.all(trimesters.map(async (trimester) => {
         try {
-          const { data } = await axios.get(`http://localhost:5000/api/report-cards/published?class_id=${studentClassId}&trimester=${encodeURIComponent(trimester)}&school_year=${schoolYear}`, {
+          const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/report-cards/published?class_id=${studentClassId}&trimester=${encodeURIComponent(trimester)}&school_year=${schoolYear}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           results[trimester] = !!data.published;
