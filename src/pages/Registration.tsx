@@ -173,9 +173,13 @@ const Receipt = ({ data, onClose, receiptRef, handleDownload }: {
   </Box>
 );
 
+function useIsMobile() {
+  return typeof window !== 'undefined' && window.matchMedia('(max-width:600px)').matches;
+}
+
 const Registration = ({ onClose }: { onClose: () => void }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery('(max-width:600px)');
+  const isMobile = useIsMobile();
   const [activeStep, setActiveStep] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState<RegistrationForm>({
@@ -476,20 +480,19 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                 {isMobile ? (
                   <MobileDatePicker
                     label="Date de naissance"
-                    inputFormat="yyyy-MM-dd"
+                    format="yyyy-MM-dd"
                     value={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
                     onChange={date => {
                       setFormData({ ...formData, dateOfBirth: date ? date.toISOString().slice(0, 10) : '' });
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        required
-                        fullWidth
-                        InputLabelProps={{ shrink: true }}
-                        helperText="Format attendu : AAAA-MM-JJ"
-                      />
-                    )}
+                    slotProps={{
+                      textField: {
+                        required: true,
+                        fullWidth: true,
+                        InputLabelProps: { shrink: true },
+                        helperText: 'Format attendu : AAAA-MM-JJ',
+                      }
+                    }}
                   />
                 ) : (
                   <TextField
