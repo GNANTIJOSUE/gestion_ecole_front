@@ -53,7 +53,7 @@ const Home = () => {
   // Pourquoi nous choisir ?
   const features = [
     {
-      title: 'Excellence académique',
+      title: 'College le jour',
       description: 'Taux de réussite de 98% au brevet des collèges',
       icon: <StarIcon />,
       color: blue[500],
