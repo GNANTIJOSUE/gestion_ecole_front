@@ -52,7 +52,7 @@ interface RegistrationForm {
   matricule: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: Date | null;
+  dateOfBirth: string; // string au lieu de Date | null
   gender: string;
   address: string;
   city: string;
@@ -182,7 +182,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
     matricule: '',
     firstName: '',
     lastName: '',
-    dateOfBirth: null,
+    dateOfBirth: '', // string vide
     gender: '',
     address: '',
     city: '',
@@ -250,7 +250,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
     // Validation des champs selon l'étape
     if (activeStep === 0) {
       // Validation des informations personnelles
-      const dateStr = formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : '';
+      const dateStr = formData.dateOfBirth;
       if (!formData.matricule || !formData.firstName || !formData.lastName || 
           !formData.dateOfBirth || !formData.gender || !formData.address || 
           !formData.city || !formData.phone || !formData.email ||
@@ -332,7 +332,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = async () => {
     try {
       // Validation finale avant soumission
-      const dateStr = formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : '';
+      const dateStr = formData.dateOfBirth;
       if (!formData.matricule || !formData.firstName || !formData.lastName || 
           !formData.dateOfBirth || !formData.gender || !formData.address || 
           !formData.city || !formData.phone || !formData.email ||
@@ -358,11 +358,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
       const payload = {
         first_name: formData.firstName,
         last_name: formData.lastName,
-        date_of_birth: formData.dateOfBirth
-          ? formData.dateOfBirth instanceof Date
-            ? formData.dateOfBirth.toISOString().split('T')[0]
-            : formData.dateOfBirth
-          : null,
+        date_of_birth: formData.dateOfBirth,
         gender: formData.gender,
         address: formData.address,
         city: formData.city,
@@ -479,8 +475,8 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               <TextField
                 label="Date de naissance"
                 placeholder="AAAA-MM-JJ"
-                value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
-                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
+                value={formData.dateOfBirth}
+                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
                 helperText="Format attendu : AAAA-MM-JJ"
