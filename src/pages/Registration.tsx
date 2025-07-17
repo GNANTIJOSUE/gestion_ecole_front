@@ -23,7 +23,7 @@ import {
   Zoom,
   Divider,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker, MobileDatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import frLocale from 'date-fns/locale/fr';
@@ -35,6 +35,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { green } from '@mui/material/colors';
 import axios from 'axios';
 import html2pdf from 'html2pdf.js';
+import { useMediaQuery } from '@mui/material';
 
 const steps = ['Informations personnelles', 'Informations académiques', 'Documents requis'];
 
@@ -173,6 +174,7 @@ const Receipt = ({ data, onClose, receiptRef, handleDownload }: {
 
 const Registration = ({ onClose }: { onClose: () => void }) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery('(max-width:600px)');
   const [activeStep, setActiveStep] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState<RegistrationForm>({
@@ -436,15 +438,21 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
-                <DatePicker
-                  label="Date de naissance"
-                  value={formData.dateOfBirth}
-                  onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
-                  slotProps={{
-                    textField: { fullWidth: true },
-                    popper: { disablePortal: true }
-                  }}
-                />
+                {isMobile ? (
+                  <MobileDatePicker
+                    label="Date de naissance"
+                    value={formData.dateOfBirth}
+                    onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
+                    slotProps={{ textField: { fullWidth: true } }}
+                  />
+                ) : (
+                  <DatePicker
+                    label="Date de naissance"
+                    value={formData.dateOfBirth}
+                    onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
+                    slotProps={{ textField: { fullWidth: true }, popper: { disablePortal: true } }}
+                  />
+                )}
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={6}>
