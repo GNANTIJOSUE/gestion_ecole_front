@@ -1019,22 +1019,14 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
         <label>Nom*<br /><input name="lastName" value={formData.lastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Genre*<br />
           <select name="gender" value={formData.gender} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }}>
-            <option value="">Choisir...</option>
-            <option value="Masculin">Masculin</option>
-            <option value="Féminin">Féminin</option>
-            <option value="Autre">Autre</option>
+            <option value="">Sélectionner</option>
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
           </select>
         </label><br />
         <label>Adresse*<br /><input name="address" value={formData.address} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Ville*<br /><input name="city" value={formData.city} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Téléphone*<br /><input name="phone" value={formData.phone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Email*<br /><input name="email" value={formData.email} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Prénom du parent*<br /><input name="parentFirstName" value={formData.parentFirstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Nom du parent*<br /><input name="parentLastName" value={formData.parentLastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Téléphone du parent*<br /><input name="parentPhone" value={formData.parentPhone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Email du parent*<br /><input name="parentEmail" value={formData.parentEmail} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Contact du parent*<br /><input name="parentContact" value={formData.parentContact} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <button type="submit" style={{ width: '100%', padding: 12, background: '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600, fontSize: 16 }}>Soumettre</button>
+        <button type="submit" style={{ width: '100%', padding: 10, background: '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600 }}>Valider</button>
       </form>
     </div>
   );
