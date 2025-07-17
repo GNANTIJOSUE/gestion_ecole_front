@@ -226,10 +226,31 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
+  const isValidDateFormat = (dateStr: string) => {
+    // Vérifie le format AAAA-MM-JJ
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(dateStr);
+    // Vérifie que la date existe vraiment
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() + 1 !== month ||
+      date.getDate() !== day
+    ) return false;
+    // Pas de date future
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (date > today) return false;
+    // Pas de date trop ancienne (ex: avant 1900)
+    if (year < 1900) return false;
+    return true;
+  };
+
   const handleNext = () => {
     // Validation des champs selon l'étape
     if (activeStep === 0) {
       // Validation des informations personnelles
+      const dateStr = formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : '';
       if (!formData.matricule || !formData.firstName || !formData.lastName || 
           !formData.dateOfBirth || !formData.gender || !formData.address || 
           !formData.city || !formData.phone || !formData.email ||
@@ -238,6 +259,14 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         setSnackbar({
           open: true,
           message: 'Veuillez remplir tous les champs obligatoires',
+          severity: 'error',
+        });
+        return;
+      }
+      if (!isValidDateFormat(dateStr)) {
+        setSnackbar({
+          open: true,
+          message: 'Veuillez saisir une date de naissance valide (format AAAA-MM-JJ, pas de date future, ni de date impossible).',
           severity: 'error',
         });
         return;
@@ -303,6 +332,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = async () => {
     try {
       // Validation finale avant soumission
+      const dateStr = formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : '';
       if (!formData.matricule || !formData.firstName || !formData.lastName || 
           !formData.dateOfBirth || !formData.gender || !formData.address || 
           !formData.city || !formData.phone || !formData.email ||
@@ -312,6 +342,14 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         setSnackbar({
           open: true,
           message: 'Veuillez remplir tous les champs obligatoires',
+          severity: 'error',
+        });
+        return;
+      }
+      if (!isValidDateFormat(dateStr)) {
+        setSnackbar({
+          open: true,
+          message: 'Veuillez saisir une date de naissance valide (format AAAA-MM-JJ, pas de date future, ni de date impossible).',
           severity: 'error',
         });
         return;
@@ -383,8 +421,6 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
-
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -440,34 +476,15 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
-                {isMobile && isIOS ? (
-                  <TextField
-                    label="Date de naissance"
-                    placeholder="AAAA-MM-JJ"
-                    value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
-                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                  />
-                ) : isMobile ? (
-                  <TextField
-                    label="Date de naissance"
-                    type="date"
-                    value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
-                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                  />
-                ) : (
-                  <DatePicker
-                    label="Date de naissance"
-                    value={formData.dateOfBirth}
-                    onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
-                    slotProps={{ textField: { fullWidth: true }, popper: { disablePortal: true } }}
-                  />
-                )}
-              </LocalizationProvider>
+              <TextField
+                label="Date de naissance"
+                placeholder="AAAA-MM-JJ"
+                value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
+                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+                helperText="Format attendu : AAAA-MM-JJ"
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
