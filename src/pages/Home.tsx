@@ -120,9 +120,75 @@ const Home = () => {
   ];
 
   return (
-    <div style={{ padding: 8, maxWidth: 700, margin: '0 auto' }}>
-      <RegistrationMinimal />
-    </div>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
+      {/* Hero Section */}
+      {/* ... tout le contenu existant ... */}
+      <Container maxWidth="lg">
+        {/* ... autres sections ... */}
+
+        {/* Call to action & inscription */}
+        {isMobile ? (
+          <Box sx={{ maxWidth: 700, mx: 'auto', my: 4 }}>
+            <RegistrationMinimal />
+          </Box>
+        ) : (
+          <>
+            <Box sx={{ mb: 8, textAlign: 'center' }}>
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                Rejoignez notre communauté
+              </Typography>
+              <Typography sx={{ mb: 3 }}>
+                Découvrez l'excellence académique et le développement personnel au Collège Excellence.
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                onClick={() => setShowRegistration(true)}
+              >
+                S'inscrire
+              </Button>
+            </Box>
+            <Modal
+              open={showRegistration}
+              onClose={() => setShowRegistration(false)}
+              aria-labelledby="modal-inscription"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 2000,
+              }}
+            >
+              <Box
+                sx={{
+                  width: { xs: '100vw', sm: 500, md: 700 },
+                  maxWidth: { xs: '100vw', sm: '98vw' },
+                  height: { xs: '100vh', sm: 'auto' },
+                  maxHeight: { xs: '100vh', sm: '98vh' },
+                  overflowY: 'auto',
+                  borderRadius: { xs: 0, sm: 5 },
+                  boxShadow: 24,
+                  bgcolor: 'background.paper',
+                  p: { xs: 1, sm: 3, md: 4 },
+                  m: 0,
+                  transition: 'all 0.3s',
+                }}
+              >
+                <ErrorBoundary>
+                  <Registration key={showRegistration ? 'open' : 'closed'} onClose={() => setShowRegistration(false)} />
+                </ErrorBoundary>
+              </Box>
+            </Modal>
+          </>
+        )}
+
+        {/* Footer */}
+        <Box sx={{ mb: 0 }}>
+          {/* ... footer existant ... */}
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
