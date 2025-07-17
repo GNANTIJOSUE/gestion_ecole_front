@@ -37,6 +37,7 @@ import axios from 'axios';
 import html2pdf from 'html2pdf.js';
 import { useMediaQuery } from '@mui/material';
 import { format } from 'date-fns';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const steps = ['Informations personnelles', 'Informations académiques', 'Documents requis'];
 
@@ -460,24 +461,25 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               {isMobile ? (
                 <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                   <label htmlFor="date-naissance" style={{ fontWeight: 500, marginBottom: 4 }}>Date de naissance *</label>
-                  <input
-                    id="date-naissance"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="\\d{4}-\\d{2}-\\d{2}"
-                    placeholder="AAAA-MM-JJ"
-                    value={formData.dateOfBirth}
-                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    style={{
-                      padding: '12px',
-                      borderRadius: 4,
-                      border: '1px solid #ccc',
-                      fontSize: 16,
-                      width: '100%',
-                      marginBottom: 4,
-                    }}
-                    required
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <CalendarTodayIcon style={{ marginRight: 8, color: '#888' }} />
+                    <input
+                      id="date-naissance"
+                      type="text"
+                      placeholder="AAAA-MM-JJ"
+                      value={formData.dateOfBirth}
+                      onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                      style={{
+                        padding: '12px',
+                        borderRadius: 4,
+                        border: '1px solid #ccc',
+                        fontSize: 16,
+                        width: '100%',
+                        marginBottom: 4,
+                      }}
+                      required
+                    />
+                  </div>
                   <span style={{ fontSize: 12, color: '#888' }}>
                     Format attendu : AAAA-MM-JJ. Saisissez la date manuellement.
                   </span>
