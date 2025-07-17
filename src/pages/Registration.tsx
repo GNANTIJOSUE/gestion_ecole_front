@@ -227,23 +227,8 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
   };
 
   const isValidDateFormat = (dateStr: string) => {
-    // Vérifie le format AAAA-MM-JJ
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
-    const [year, month, day] = dateStr.split('-').map(Number);
-    const date = new Date(dateStr);
-    // Vérifie que la date existe vraiment
-    if (
-      date.getFullYear() !== year ||
-      date.getMonth() + 1 !== month ||
-      date.getDate() !== day
-    ) return false;
-    // Pas de date future
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    if (date > today) return false;
-    // Pas de date trop ancienne (ex: avant 1900)
-    if (year < 1900) return false;
-    return true;
+    // Vérifie le format AAAA-MM-JJ strictement
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
   };
 
   const handleNext = () => {
@@ -477,7 +462,10 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                   <label htmlFor="date-naissance" style={{ fontWeight: 500, marginBottom: 4 }}>Date de naissance *</label>
                   <input
                     id="date-naissance"
-                    type="date"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="\\d{4}-\\d{2}-\\d{2}"
+                    placeholder="AAAA-MM-JJ"
                     value={formData.dateOfBirth}
                     onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
                     style={{
@@ -491,7 +479,7 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
                     required
                   />
                   <span style={{ fontSize: 12, color: '#888' }}>
-                    Format attendu : AAAA-MM-JJ. Si le sélecteur ne s'ouvre pas, saisissez la date manuellement.
+                    Format attendu : AAAA-MM-JJ. Saisissez la date manuellement.
                   </span>
                 </div>
               ) : (
