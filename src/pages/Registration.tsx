@@ -473,11 +473,12 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                required
+                fullWidth
                 label="Date de naissance"
-                placeholder="AAAA-MM-JJ"
+                type="date"
                 value={formData.dateOfBirth}
                 onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                fullWidth
                 InputLabelProps={{ shrink: true }}
                 helperText="Format attendu : AAAA-MM-JJ"
               />

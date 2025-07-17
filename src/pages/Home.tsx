@@ -348,7 +348,6 @@ const Home = () => {
       </Container>
 
       {/* Modale d'inscription */}
-      {/*
       <Modal
         open={showRegistration}
         onClose={() => setShowRegistration(false)}
@@ -383,13 +382,14 @@ const Home = () => {
           </ErrorBoundary>
         </Box>
       </Modal>
-      */}
       {/* Formulaire d'inscription affiché directement pour test mobile */}
+      {/*
       <Box sx={{ maxWidth: 700, mx: 'auto', my: 4 }}>
         <ErrorBoundary>
           <Registration key="direct" onClose={() => {}} />
         </ErrorBoundary>
       </Box>
+      */}
     </Box>
   );
 };
