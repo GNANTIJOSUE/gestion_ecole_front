@@ -173,13 +173,9 @@ const Receipt = ({ data, onClose, receiptRef, handleDownload }: {
   </Box>
 );
 
-function useIsMobile() {
-  return typeof window !== 'undefined' && window.matchMedia('(max-width:600px)').matches;
-}
-
 const Registration = ({ onClose }: { onClose: () => void }) => {
   const theme = useTheme();
-  const isMobile = useIsMobile();
+  const isMobile = useMediaQuery('(max-width:600px)');
   const [activeStep, setActiveStep] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState<RegistrationForm>({
@@ -476,16 +472,40 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="Date de naissance"
-                type="date"
-                value={formData.dateOfBirth}
-                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-                helperText="Format attendu : AAAA-MM-JJ. Si le sélecteur ne s'ouvre pas, saisissez la date manuellement."
-              />
+              {isMobile ? (
+                <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                  <label htmlFor="date-naissance" style={{ fontWeight: 500, marginBottom: 4 }}>Date de naissance *</label>
+                  <input
+                    id="date-naissance"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    style={{
+                      padding: '12px',
+                      borderRadius: 4,
+                      border: '1px solid #ccc',
+                      fontSize: 16,
+                      width: '100%',
+                      marginBottom: 4,
+                    }}
+                    required
+                  />
+                  <span style={{ fontSize: 12, color: '#888' }}>
+                    Format attendu : AAAA-MM-JJ. Si le sélecteur ne s'ouvre pas, saisissez la date manuellement.
+                  </span>
+                </div>
+              ) : (
+                <TextField
+                  required
+                  fullWidth
+                  label="Date de naissance"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                  helperText="Format attendu : AAAA-MM-JJ. Si le sélecteur ne s'ouvre pas, saisissez la date manuellement."
+                />
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -805,10 +825,10 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
         position: 'relative',
         transition: 'box-shadow 0.3s',
         animation: 'fadeInUp 0.5s',
-        // Correction : alléger le style sur mobile
+        // Correction : aucun overflow sur mobile
         maxHeight: { sm: '98vh', xs: 'none' },
         overflowY: { sm: 'auto', xs: 'visible' },
-        pb: { xs: 8, sm: 4 }, // padding bas pour éviter le clavier mobile
+        pb: { xs: 8, sm: 4 },
         '@keyframes fadeInUp': {
           from: { opacity: 0, transform: 'translateY(40px)' },
           to: { opacity: 1, transform: 'translateY(0)' },
