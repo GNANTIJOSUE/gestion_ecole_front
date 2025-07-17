@@ -358,9 +358,6 @@ const Home = () => {
           justifyContent: 'center',
           zIndex: 2000,
         }}
-        disablePortal
-        disableEnforceFocus
-        disableAutoFocus
       >
         <Box
           sx={{
