@@ -383,6 +383,8 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -439,7 +441,16 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
-                {isMobile ? (
+                {isMobile && isIOS ? (
+                  <TextField
+                    label="Date de naissance"
+                    placeholder="AAAA-MM-JJ"
+                    value={formData.dateOfBirth ? format(formData.dateOfBirth, 'yyyy-MM-dd') : ''}
+                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value ? new Date(e.target.value) : null })}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                ) : isMobile ? (
                   <TextField
                     label="Date de naissance"
                     type="date"
