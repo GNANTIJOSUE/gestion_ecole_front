@@ -476,37 +476,16 @@ const Registration = ({ onClose }: { onClose: () => void }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
-                {isMobile ? (
-                  <MobileDatePicker
-                    label="Date de naissance"
-                    format="yyyy-MM-dd"
-                    value={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
-                    onChange={date => {
-                      setFormData({ ...formData, dateOfBirth: date ? date.toISOString().slice(0, 10) : '' });
-                    }}
-                    slotProps={{
-                      textField: {
-                        required: true,
-                        fullWidth: true,
-                        InputLabelProps: { shrink: true },
-                        helperText: 'Format attendu : AAAA-MM-JJ',
-                      }
-                    }}
-                  />
-                ) : (
-                  <TextField
-                    required
-                    fullWidth
-                    label="Date de naissance"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    InputLabelProps={{ shrink: true }}
-                    helperText="Format attendu : AAAA-MM-JJ"
-                  />
-                )}
-              </LocalizationProvider>
+              <TextField
+                required
+                fullWidth
+                label="Date de naissance"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                helperText="Format attendu : AAAA-MM-JJ. Si le sélecteur ne s'ouvre pas, saisissez la date manuellement."
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
