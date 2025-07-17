@@ -72,7 +72,7 @@ const StudentPaymentPage = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       try {
-        const res = await axios.get(`http://schoolapp.sp-p6.com/api/students/me/details?school_year=${schoolYear}`, {
+        const res = await axios.get(`https://schoolapp.sp-p6.com/api/students/me/details?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) {
@@ -178,7 +178,7 @@ const StudentPaymentPage = () => {
       const token = localStorage.getItem('token');
       // Enregistrement du paiement dans la base de données
       const response = await axios.post(
-        'http://schoolapp.sp-p6.com/api/payments',
+        'https://schoolapp.sp-p6.com/api/payments',
         {
           student_id: student.id,
           amount: amount,
@@ -201,7 +201,7 @@ const StudentPaymentPage = () => {
         setFusionStatusMsg(null);
       }
       // Rafraîchir la liste des paiements
-      const payRes = await axios.get('http://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
+      const payRes = await axios.get('https://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
       setStudent(payRes.data.student);
       setPayments(payRes.data.student.payments || []);
       // Afficher le reçu avec les données du backend
@@ -229,7 +229,7 @@ const StudentPaymentPage = () => {
     setFusionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://schoolapp.sp-p6.com/api/payments/fusion-init', {
+      const res = await axios.post('https://schoolapp.sp-p6.com/api/payments/fusion-init', {
         student_id: student.id,
         amount: amountToPay,
         numeroSend: numeroSend
@@ -253,13 +253,13 @@ const StudentPaymentPage = () => {
     setCheckingStatus(true);
     setFusionStatusMsg(null);
     try {
-      const res = await axios.get(`http://schoolapp.sp-p6.com/api/payments/fusion-status/${fusionToken}`);
+      const res = await axios.get(`https://schoolapp.sp-p6.com/api/payments/fusion-status/${fusionToken}`);
       setFusionStatus(res.data.statut);
       setFusionStatusMsg(res.data.message || '');
       // Si payé, rafraîchir les paiements
       if (res.data.statut === 'paid') {
         const token = localStorage.getItem('token');
-        const payRes = await axios.get('http://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
+        const payRes = await axios.get('https://schoolapp.sp-p6.com/api/students/me/details', { headers: { Authorization: `Bearer ${token}` } });
         setStudent(payRes.data.student);
         setPayments(payRes.data.student.payments || []);
         setShowReceipt(true); // Affiche le reçu seulement si payé

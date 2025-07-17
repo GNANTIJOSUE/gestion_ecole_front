@@ -64,7 +64,7 @@ const PrivateEventPage = () => {
     const fetchStudents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://schoolapp.sp-p6.com/api/students', {
+        const response = await axios.get('https://schoolapp.sp-p6.com/api/students', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (isMounted) setStudents(response.data);
@@ -98,7 +98,7 @@ const PrivateEventPage = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://schoolapp.sp-p6.com/api/events/private',
+        'https://schoolapp.sp-p6.com/api/events/private',
         { title, message, event_date: eventDate || null, recipient_user_id: selectedStudent.user_id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -72,13 +72,13 @@ const ClassEventCreationPage = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const classRes = await axios.get(`http://schoolapp.sp-p6.com/api/classes/${classId}`, {
+        const classRes = await axios.get(`https://schoolapp.sp-p6.com/api/classes/${classId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         if (!isMounted) return;
         setClassDetails(classRes.data);
 
-        const studentsRes = await axios.get(`http://schoolapp.sp-p6.com/api/classes/${classId}/students`, {
+        const studentsRes = await axios.get(`https://schoolapp.sp-p6.com/api/classes/${classId}/students`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (isMounted) setStudents(studentsRes.data);
@@ -108,7 +108,7 @@ const ClassEventCreationPage = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://schoolapp.sp-p6.com/api/events/class',
+        'https://schoolapp.sp-p6.com/api/events/class',
         { title, message, event_date: eventDate, class_id: classId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

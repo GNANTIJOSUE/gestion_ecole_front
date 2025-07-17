@@ -124,7 +124,7 @@ const TeacherDashboard = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user.role === 'teacher') {
       const token = localStorage.getItem('token');
-      axios.get(`http://localhost:5000/api/teachers/me?school_year=${schoolYear}`, {
+      axios.get(`https://schoolapp.sp-p6.com/api/teachers/me?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -164,7 +164,7 @@ const TeacherDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const { data } = await axios.get(
-        `http://localhost:5000/api/teachers/${teacher?.id}/subjects?school_year=${schoolYear}`,
+        `https://schoolapp.sp-p6.com/api/teachers/${teacher?.id}/subjects?school_year=${schoolYear}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log('Matières récupérées:', data);
@@ -189,7 +189,7 @@ const TeacherDashboard = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://localhost:5000/api/teachers/${teacher?.id}/subjects/${subject.id}/classes`, {
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/teachers/${teacher?.id}/subjects/${subject.id}/classes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubjectClasses(data);
@@ -217,13 +217,13 @@ const TeacherDashboard = () => {
 
       console.log('Chargement des données pour la classe:', classe.id, 'matière:', selectedSubject);
 
-      const studentsPromise = axios.get(`http://localhost:5000/api/classes/${classe.id}/students?school_year=${schoolYear}`, { 
+      const studentsPromise = axios.get(`https://schoolapp.sp-p6.com/api/classes/${classe.id}/students?school_year=${schoolYear}`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
-      const gradesPromise = axios.get(`http://localhost:5000/api/classes/${classe.id}/grades?subject_id=${selectedSubject}&school_year=${schoolYear}`, { 
+      const gradesPromise = axios.get(`https://schoolapp.sp-p6.com/api/classes/${classe.id}/grades?subject_id=${selectedSubject}&school_year=${schoolYear}`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
-      const absencesPromise = axios.get(`http://localhost:5000/api/absences?class_id=${classe.id}&subject_id=${selectedSubject}&school_year=${schoolYear}&semester=${selectedTrimester}`, { 
+      const absencesPromise = axios.get(`https://schoolapp.sp-p6.com/api/absences?class_id=${classe.id}&subject_id=${selectedSubject}&school_year=${schoolYear}&semester=${selectedTrimester}`, { 
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -311,7 +311,7 @@ const TeacherDashboard = () => {
 
       if (editMode && editingGradeId) {
         const response = await axios.put(
-          `http://localhost:5000/api/teachers/grades/${editingGradeId}`, 
+          `https://schoolapp.sp-p6.com/api/teachers/grades/${editingGradeId}`, 
           payload, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -319,7 +319,7 @@ const TeacherDashboard = () => {
         setSnackbar({ open: true, message: 'Note modifiée avec succès !', severity: 'success' });
       } else {
         const response = await axios.post(
-          'http://localhost:5000/api/teachers/grades', 
+          'https://schoolapp.sp-p6.com/api/teachers/grades', 
           payload, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -375,7 +375,7 @@ const TeacherDashboard = () => {
         return;
       }
 
-      await axios.delete(`http://localhost:5000/api/teachers/grades/${id}`, { 
+      await axios.delete(`https://schoolapp.sp-p6.com/api/teachers/grades/${id}`, { 
         headers: { Authorization: `Bearer ${token}` } 
       });
       
@@ -458,7 +458,7 @@ const TeacherDashboard = () => {
     const { id } = selectedClass;
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:5000/api/classes/${id}/notify-students`, {}, {
+      await axios.post(`https://schoolapp.sp-p6.com/api/classes/${id}/notify-students`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSnackbar({ open: true, message: '✅ Les notifications ont bien été envoyées à tous les étudiants de la classe. Ils recevront une alerte avec leurs nouvelles notes.', severity: 'success' });
@@ -478,7 +478,7 @@ const TeacherDashboard = () => {
     const { id } = selectedClass;
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:5000/api/classes/${id}/submit-to-admin`, {}, {
+      await axios.post(`https://schoolapp.sp-p6.com/api/classes/${id}/submit-to-admin`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSnackbar({ open: true, message: '✅ Les notes et moyennes de la classe ont bien été transmises à l\'administration. L\'équipe administrative pourra désormais établir les bulletins.', severity: 'success' });
@@ -496,7 +496,7 @@ const TeacherDashboard = () => {
     setPublishingGrades(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/teachers/publish-grades', {
+      const response = await axios.post('https://schoolapp.sp-p6.com/api/teachers/publish-grades', {
         class_id: selectedClass.id,
         subject_id: selectedSubject,
         semester: selectedTrimester,
@@ -549,7 +549,7 @@ const TeacherDashboard = () => {
     const promises = Object.entries(absenceList)
       .filter(([_, v]) => v.absent)
       .map(([studentId, v]) =>
-        axios.post('http://localhost:5000/api/absences', {
+        axios.post('https://schoolapp.sp-p6.com/api/absences', {
           student_id: studentId,
           class_id: selectedClass?.id,
           subject_id: selectedSubject,
@@ -573,7 +573,7 @@ const TeacherDashboard = () => {
     setSchedule([]);
     setLoadingSchedule(true);
     const token = localStorage.getItem('token');
-    axios.get(`http://localhost:5000/api/teachers/${teacher.id}/teaching-schedule?school_year=${schoolYear}`, {
+    axios.get(`https://schoolapp.sp-p6.com/api/teachers/${teacher.id}/teaching-schedule?school_year=${schoolYear}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => setSchedule(res.data))

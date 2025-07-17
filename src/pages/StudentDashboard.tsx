@@ -115,7 +115,7 @@ const StudentDashboard = () => {
       try {
         // Étape 1: Récupérer les données de l'étudiant (priorité haute)
         console.log('[StudentDashboard] Étape 1: Récupération des données étudiant...');
-        const studentResponse = await axios.get('http://schoolapp.sp-p6.com/api/auth/me', {
+        const studentResponse = await axios.get('https://schoolapp.sp-p6.com/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 15000 // Augmenté à 15 secondes pour le debug
         });
@@ -146,7 +146,7 @@ const StudentDashboard = () => {
           const pub: { [key: string]: boolean } = {};
           for (const t of ['1er trimestre', '2e trimestre', '3e trimestre']) {
             try {
-              const res = await axios.get(`http://schoolapp.sp-p6.com/api/report-cards/published?class_id=${studentClassId}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
+              const res = await axios.get(`https://schoolapp.sp-p6.com/api/report-cards/published?class_id=${studentClassId}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
                 headers: { Authorization: `Bearer ${token}` }
               });
               pub[t] = !!res.data.published;
@@ -167,7 +167,7 @@ const StudentDashboard = () => {
         console.log('[StudentDashboard] Étape 2: Chargement en arrière-plan...');
         
         // Charger les notifications
-        axios.get('http://schoolapp.sp-p6.com/api/events/my-notifications', {
+        axios.get('https://schoolapp.sp-p6.com/api/events/my-notifications', {
             headers: { Authorization: `Bearer ${token}` },
             timeout: 3000
         }).then(response => {
@@ -181,7 +181,7 @@ const StudentDashboard = () => {
           console.log(`[StudentDashboard] Chargement des notes récentes pour l'étudiant ID: ${studentResponse.data.student.id}`);
           setLoadingRecentGrades(true);
           
-          axios.get(`http://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/grades?school_year=${schoolYear}`, {
+          axios.get(`https://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/grades?school_year=${schoolYear}`, {
             headers: { Authorization: `Bearer ${token}` },
             timeout: 8000 // Réduit à 8 secondes
           }).then(response => {
@@ -204,7 +204,7 @@ const StudentDashboard = () => {
           const fetchAnnualAverage = async () => {
             const token = localStorage.getItem('token');
             try {
-              const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/annual-average?school_year=${schoolYear}`, {
+              const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${studentResponse.data.student.id}/annual-average?school_year=${schoolYear}`, {
                 headers: { Authorization: `Bearer ${token}` }
               });
               setAnnualAverage(data);
@@ -264,7 +264,7 @@ const StudentDashboard = () => {
     const fetchRank = async () => {
       try {
         const token = localStorage.getItem('token');
-        const url = `http://schoolapp.sp-p6.com/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(selectedSemester)}&school_year=${schoolYear}`;
+        const url = `https://schoolapp.sp-p6.com/api/students/${student.id}/trimester-rank?semester=${encodeURIComponent(selectedSemester)}&school_year=${schoolYear}`;
         console.log('Appel API rang global:', url, 'semester:', selectedSemester);
         const { data } = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
@@ -315,7 +315,7 @@ const StudentDashboard = () => {
     setLoadingNotes(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${student.id}/grades?school_year=${schoolYear}`, {
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${student.id}/grades?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 20000 // 20 secondes de timeout pour les notes complètes
       });
@@ -350,7 +350,7 @@ const StudentDashboard = () => {
   const handleMarkAsRead = async (notificationId: number) => {
     try {
         const token = localStorage.getItem('token');
-        await axios.put(`http://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
+        await axios.put(`https://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: 1 } : n));

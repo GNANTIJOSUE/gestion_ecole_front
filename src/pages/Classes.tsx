@@ -65,7 +65,7 @@ const Classes = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+        const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) setClasses(res.data);
@@ -93,14 +93,14 @@ const Classes = () => {
   const handleAddClass = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://schoolapp.sp-p6.com/api/classes', {
+      await axios.post('https://schoolapp.sp-p6.com/api/classes', {
         name: newClass.name,
         level: newClass.level,
         academic_year: new Date().getFullYear().toString(),
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+      const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data);

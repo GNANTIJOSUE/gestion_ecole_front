@@ -19,11 +19,11 @@ const AbsencesTab = ({ childId, schoolYear }: { childId: string | undefined, sch
       setLoading(true);
       const token = localStorage.getItem('token');
       // 1. Récupère les absences brutes
-      const absReq = axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/absences?school_year=${schoolYear}`, {
+      const absReq = axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}/absences?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // 2. Récupère les notifications du parent connecté
-      const notifReq = axios.get('http://schoolapp.sp-p6.com/api/events/my-notifications', {
+      const notifReq = axios.get('https://schoolapp.sp-p6.com/api/events/my-notifications', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const [{ data: absData }, { data: notifData }] = await Promise.all([absReq, notifReq]);

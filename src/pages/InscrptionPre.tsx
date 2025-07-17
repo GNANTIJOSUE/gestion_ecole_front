@@ -301,7 +301,7 @@ const InscrptionPre = ({ onClose, initialData }: { onClose: () => void, initialD
   useEffect(() => {
     let isMounted = true;
     
-    axios.get('http://schoolapp.sp-p6.com/api/classes', {
+    axios.get('https://schoolapp.sp-p6.com/api/classes', {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
       .then(res => {
@@ -405,7 +405,7 @@ const InscrptionPre = ({ onClose, initialData }: { onClose: () => void, initialD
       console.log('PAYLOAD:', payload);
 
       await axios.post(
-        'http://schoolapp.sp-p6.com/api/students',
+        'https://schoolapp.sp-p6.com/api/students',
         payload,
         {
           headers: {

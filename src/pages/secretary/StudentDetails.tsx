@@ -48,10 +48,10 @@ const StudentDetails = () => {
       try {
         const token = localStorage.getItem('token');
         const [studentData, discountsData] = await Promise.all([
-          axios.get(`http://schoolapp.sp-p6.com/api/students/${id}/details`, {
+          axios.get(`https://schoolapp.sp-p6.com/api/students/${id}/details`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`http://schoolapp.sp-p6.com/api/discounts/student/${id}`)
+          axios.get(`https://schoolapp.sp-p6.com/api/discounts/student/${id}`)
         ]);
         if (isMounted) {
           setStudent(studentData.data);

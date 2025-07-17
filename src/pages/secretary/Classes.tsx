@@ -72,7 +72,7 @@ const Classes = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+        const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
           headers: { Authorization: `Bearer ${token}` },
           params: { school_year: schoolYear }
         });
@@ -119,7 +119,7 @@ const Classes = () => {
   const handleAddClass = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://schoolapp.sp-p6.com/api/classes', {
+      await axios.post('https://schoolapp.sp-p6.com/api/classes', {
         name: newClass.name,
         level: newClass.level,
         academic_year: new Date().getFullYear().toString(),
@@ -129,7 +129,7 @@ const Classes = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Recharge la liste
-      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+      const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data);
@@ -151,7 +151,7 @@ const Classes = () => {
     if (window.confirm('Voulez-vous vraiment supprimer cette classe ?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://schoolapp.sp-p6.com/api/classes/${id}`, {
+        await axios.delete(`https://schoolapp.sp-p6.com/api/classes/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setClasses(classes.filter(c => c.id !== id));
@@ -189,7 +189,7 @@ const Classes = () => {
     if (!editClass) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://schoolapp.sp-p6.com/api/classes/${editClass.id}`, {
+      await axios.put(`https://schoolapp.sp-p6.com/api/classes/${editClass.id}`, {
         name: editClass.name,
         level: editClass.level,
         academic_year: editClass.academic_year,
@@ -199,7 +199,7 @@ const Classes = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Recharge la liste
-      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+      const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data);
@@ -219,7 +219,7 @@ const Classes = () => {
       const params = new URLSearchParams({ level });
       if (excludeId) params.append('excludeId', excludeId.toString());
       
-      const res = await axios.get(`http://schoolapp.sp-p6.com/api/classes/check-amount?${params}`, {
+      const res = await axios.get(`https://schoolapp.sp-p6.com/api/classes/check-amount?${params}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

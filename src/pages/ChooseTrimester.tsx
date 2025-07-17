@@ -85,7 +85,7 @@ const ChooseTrimester = () => {
 
       try {
         // Récupérer les informations de l'étudiant
-        const studentRes = await axios.get(`http://localhost:5000/api/students/me?school_year=${schoolYear}`, {
+        const studentRes = await axios.get(`https://schoolapp.sp-p6.com/api/students/me?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -93,7 +93,7 @@ const ChooseTrimester = () => {
         setStudent(studentRes.data.student);
 
         // Récupérer toutes les notes de l'étudiant
-        const gradesRes = await axios.get(`http://localhost:5000/api/students/${studentRes.data.student.id}/grades?school_year=${schoolYear}`, {
+        const gradesRes = await axios.get(`https://schoolapp.sp-p6.com/api/students/${studentRes.data.student.id}/grades?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -106,7 +106,7 @@ const ChooseTrimester = () => {
           const pub: { [key: string]: boolean } = {};
           for (const t of ['1er trimestre', '2e trimestre', '3e trimestre']) {
             try {
-              const res = await axios.get(`http://localhost:5000/api/report-cards/published?class_id=${studentRes.data.student.class_id}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
+              const res = await axios.get(`https://schoolapp.sp-p6.com/api/report-cards/published?class_id=${studentRes.data.student.class_id}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
                 headers: { Authorization: `Bearer ${token}` }
               });
               pub[t] = !!res.data.published;

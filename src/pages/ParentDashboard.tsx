@@ -48,7 +48,7 @@ const ParentDashboard = () => {
   const markNotificationAsRead = async (notificationId: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
+      await axios.put(`https://schoolapp.sp-p6.com/api/events/notifications/${notificationId}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Mettre à jour l'état local
@@ -65,7 +65,7 @@ const ParentDashboard = () => {
   const markAllNotificationsAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://schoolapp.sp-p6.com/api/events/notifications/read-all', {}, {
+      await axios.put('https://schoolapp.sp-p6.com/api/events/notifications/read-all', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Mettre à jour l'état local
@@ -113,7 +113,7 @@ const ParentDashboard = () => {
         return;
       }
       try {
-        const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students?parent_code=${parent_code}`, {
+        const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students?parent_code=${parent_code}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setChildren(data);
@@ -128,7 +128,7 @@ const ParentDashboard = () => {
     const fetchNotifications = async () => {
       const token = localStorage.getItem('token');
       try {
-        const { data } = await axios.get('http://schoolapp.sp-p6.com/api/events/my-notifications', {
+        const { data } = await axios.get('https://schoolapp.sp-p6.com/api/events/my-notifications', {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('[FRONT][ParentDashboard] Notifications reçues:', data);
@@ -144,7 +144,7 @@ const ParentDashboard = () => {
     const fetchParent = async () => {
       const token = localStorage.getItem('token');
       try {
-        const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/parents/me?school_year=${schoolYear}`, {
+        const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/parents/me?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setParent(data);

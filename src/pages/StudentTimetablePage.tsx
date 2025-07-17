@@ -83,7 +83,7 @@ const StudentTimetablePage = () => {
 
   const fetchTimetable = useCallback(async (token: string, classId: number) => {
     try {
-      const scheduleRes = await axios.get(`http://schoolapp.sp-p6.com/api/schedules/class/${classId}?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } });
+      const scheduleRes = await axios.get(`https://schoolapp.sp-p6.com/api/schedules/class/${classId}?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } });
       setSchedule(scheduleRes.data);
     } catch (scheduleErr) {
       console.warn("Avertissement: Impossible de charger l'emploi du temps.", scheduleErr);
@@ -103,7 +103,7 @@ const StudentTimetablePage = () => {
     
     const fetchStudentInfo = async () => {
         try {
-            const res = await axios.get(`http://schoolapp.sp-p6.com/api/auth/me?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.get(`https://schoolapp.sp-p6.com/api/auth/me?school_year=${schoolYear}`, { headers: { Authorization: `Bearer ${token}` } });
             if (!isMounted) return;
             
             if (res.data.student && res.data.student.class_id) {

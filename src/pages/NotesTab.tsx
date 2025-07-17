@@ -12,7 +12,7 @@ const NotesTab = ({ childId, schoolYear }: { childId: string | undefined, school
     const fetchGrades = async () => {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/grades?school_year=${schoolYear}`, {
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}/grades?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setGrades(data);

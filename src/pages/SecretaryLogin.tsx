@@ -53,7 +53,7 @@ const SecretaryLogin = () => {
     }
 
     try {
-      const response = await axios.post('http://schoolapp.sp-p6.com/api/auth/login', {
+      const response = await axios.post('https://schoolapp.sp-p6.com/api/auth/login', {
         email: formData.email,
         password: formData.password,
         role: 'secretary'

@@ -35,7 +35,7 @@ const Subjects = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://schoolapp.sp-p6.com/api/subjects', {
+      const res = await axios.get('https://schoolapp.sp-p6.com/api/subjects', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubjects(res.data);
@@ -105,9 +105,9 @@ const Subjects = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       if (isEditMode && selectedSubject) {
-        await axios.put(`http://schoolapp.sp-p6.com/api/subjects/${selectedSubject.id}`, formData, config);
+        await axios.put(`https://schoolapp.sp-p6.com/api/subjects/${selectedSubject.id}`, formData, config);
       } else {
-        await axios.post('http://schoolapp.sp-p6.com/api/subjects', formData, config);
+        await axios.post('https://schoolapp.sp-p6.com/api/subjects', formData, config);
       }
       
       handleCloseModal();
@@ -123,7 +123,7 @@ const Subjects = () => {
     if (window.confirm('Voulez-vous vraiment supprimer cette matière ? Cette action est irréversible.')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://schoolapp.sp-p6.com/api/subjects/${subjectId}`, {
+        await axios.delete(`https://schoolapp.sp-p6.com/api/subjects/${subjectId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchSubjects();

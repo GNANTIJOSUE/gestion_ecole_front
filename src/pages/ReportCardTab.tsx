@@ -52,7 +52,7 @@ const ReportCardTab = ({ childId, schoolYear }: { childId: string | undefined, s
       if (!childId) return;
       const token = localStorage.getItem('token');
       try {
-        const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, {
+        const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStudent(data);
@@ -68,7 +68,7 @@ const ReportCardTab = ({ childId, schoolYear }: { childId: string | undefined, s
       if (!childId) return;
       setLoading(true);
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/grades?school_year=${schoolYear}`, {
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}/grades?school_year=${schoolYear}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const byTrimester: { [key: string]: any[] } = {};
@@ -81,7 +81,7 @@ const ReportCardTab = ({ childId, schoolYear }: { childId: string | undefined, s
       // On a besoin du class_id de l'élève pour l'année scolaire sélectionnée
       let classId = null;
       try {
-        const studentRes = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, {
+        const studentRes = await axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}?school_year=${schoolYear}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         classId = studentRes.data.class_id;
@@ -94,7 +94,7 @@ const ReportCardTab = ({ childId, schoolYear }: { childId: string | undefined, s
       if (classId) {
         for (const t of ['1er trimestre', '2e trimestre', '3e trimestre']) {
           try {
-            const res = await axios.get(`http://schoolapp.sp-p6.com/api/report-cards/published?class_id=${classId}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
+            const res = await axios.get(`https://schoolapp.sp-p6.com/api/report-cards/published?class_id=${classId}&trimester=${encodeURIComponent(t)}&school_year=${schoolYear}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
             published[t] = !!res.data.published;
@@ -118,7 +118,7 @@ const ReportCardTab = ({ childId, schoolYear }: { childId: string | undefined, s
     setLoading(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.get(`http://schoolapp.sp-p6.com/api/students/${childId}/trimester-rank?semester=${encodeURIComponent(trimester)}`, {
+      const res = await axios.get(`https://schoolapp.sp-p6.com/api/students/${childId}/trimester-rank?semester=${encodeURIComponent(trimester)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRangClasse(res.data.rank + ' / ' + res.data.total);

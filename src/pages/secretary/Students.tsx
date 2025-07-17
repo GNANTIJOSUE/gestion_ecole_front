@@ -222,7 +222,7 @@ const Students = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://schoolapp.sp-p6.com/api/students`, {
+      const res = await axios.get(`https://schoolapp.sp-p6.com/api/students`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { school_year: schoolYear }
       });
@@ -241,7 +241,7 @@ const Students = () => {
   const fetchClasses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+      const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClasses(res.data.map((c: any) => ({ ...c, level: c.level || '' })));
@@ -307,7 +307,7 @@ const Students = () => {
     if (window.confirm('Voulez-vous vraiment supprimer cet étudiant ?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://schoolapp.sp-p6.com/api/students/${studentId}`, {
+        await axios.delete(`https://schoolapp.sp-p6.com/api/students/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchStudents();
@@ -350,7 +350,7 @@ const Students = () => {
         additional_info: editStudent.additional_info,
         class_id: editStudent.class_id || null
       };
-      await axios.put(`http://schoolapp.sp-p6.com/api/students/${editStudent.id}`, payload, {
+      await axios.put(`https://schoolapp.sp-p6.com/api/students/${editStudent.id}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEditSuccess('Modification enregistrée avec succès !');
@@ -422,7 +422,7 @@ const Students = () => {
         school_year: schoolYear,
         payment_method: 'cash',
       });
-      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/payments`, {
+      const { data } = await axios.post(`https://schoolapp.sp-p6.com/api/payments`, {
         student_id: studentToPay.id,
         amount: Number(paymentAmount),
         school_year: schoolYear,
@@ -482,7 +482,7 @@ const Students = () => {
     setFinalizeLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/students/${student.id}/finalize`, {
+      const { data } = await axios.post(`https://schoolapp.sp-p6.com/api/students/${student.id}/finalize`, {
         class_id: finalizeClassId,
         payment_amount: finalizePayment,
       }, {
@@ -591,15 +591,15 @@ const Students = () => {
     setPreviousLevel(''); // reset
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students?registration_number=${matriculeSearch}`,
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students?registration_number=${matriculeSearch}`,
         { headers: { Authorization: `Bearer ${token}` } });
       if (data && data.length > 0) {
         setReinscriptionStudent(data[0]);
         // Récupérer le total dû et payé de l'année précédente
         const prevYear = getPreviousSchoolYear();
         const [enrollmentsRes, paymentsRes] = await Promise.all([
-          axios.get(`http://schoolapp.sp-p6.com/api/students/${data[0].id}/classes?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`http://schoolapp.sp-p6.com/api/students/${data[0].id}/payments?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`https://schoolapp.sp-p6.com/api/students/${data[0].id}/classes?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`https://schoolapp.sp-p6.com/api/students/${data[0].id}/payments?school_year=${prevYear}`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         let totalDue = 0;
         if (enrollmentsRes.data && enrollmentsRes.data.length > 0) {
@@ -645,7 +645,7 @@ const Students = () => {
           return;
         }
         // Paiement du reliquat
-        await axios.post(`http://schoolapp.sp-p6.com/api/payments`, {
+        await axios.post(`https://schoolapp.sp-p6.com/api/payments`, {
           student_id: reinscriptionStudent.id,
           amount: previousYearPayment,
           school_year: getPreviousSchoolYear(),
@@ -653,7 +653,7 @@ const Students = () => {
         }, { headers: { Authorization: `Bearer ${token}` } });
       }
       // Réinscription pour la nouvelle année
-      const { data } = await axios.post(`http://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/reinscription`, {
+      const { data } = await axios.post(`https://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/reinscription`, {
         class_id: reinscriptionClassId,
         payment_amount: reinscriptionPayment,
         school_year: schoolYear,
@@ -706,7 +706,7 @@ const Students = () => {
       if (reinscriptionStudent) {
         try {
           const token = localStorage.getItem('token');
-          const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/annual-average`, {
+          const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/students/${reinscriptionStudent.id}/annual-average`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           // Admis si moyenne >= 10
@@ -815,7 +815,7 @@ const Students = () => {
   const handleShowReceipt = async (paymentId: number | string) => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`http://schoolapp.sp-p6.com/api/payments/${paymentId}/receipt`, {
+      const { data } = await axios.get(`https://schoolapp.sp-p6.com/api/payments/${paymentId}/receipt`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPaymentReceiptData(data);

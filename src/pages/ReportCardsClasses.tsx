@@ -18,7 +18,7 @@ const ReportCardsClasses = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://schoolapp.sp-p6.com/api/classes', {
+        const res = await axios.get('https://schoolapp.sp-p6.com/api/classes', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (isMounted) setClasses(res.data);
