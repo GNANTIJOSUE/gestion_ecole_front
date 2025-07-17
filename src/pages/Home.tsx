@@ -364,15 +364,16 @@ const Home = () => {
       >
         <Box
           sx={{
-            width: { xs: '100%', sm: 500, md: 700 },
-            maxWidth: '98vw',
-            maxHeight: '98vh',
+            width: { xs: '100vw', sm: 500, md: 700 },
+            maxWidth: { xs: '100vw', sm: '98vw' },
+            height: { xs: '100vh', sm: 'auto' },
+            maxHeight: { xs: '100vh', sm: '98vh' },
             overflowY: 'auto',
-            borderRadius: 5,
+            borderRadius: { xs: 0, sm: 5 },
             boxShadow: 24,
             bgcolor: 'background.paper',
             p: { xs: 1, sm: 3, md: 4 },
-            mb: 2,
+            m: 0,
             transition: 'all 0.3s',
           }}
         >
