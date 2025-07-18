@@ -993,29 +993,96 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
     specialNeeds: '',
     additionalInfo: '',
   });
+  const [files, setFiles] = React.useState<{ [key: string]: File | null }>({
+    birth: null,
+    report: null,
+    id: null,
+    vaccine: null,
+  });
   const [error, setError] = React.useState('');
+  const [success, setSuccess] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [receiptData, setReceiptData] = React.useState<any | null>(null);
+  const receiptRef = React.useRef<HTMLDivElement>(null);
   const isValidDateFormat = (dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files: fileList } = e.target;
+    if (fileList && fileList[0]) {
+      setFiles((prev) => ({ ...prev, [name]: fileList[0] }));
+    }
+  };
+  const handleDownload = () => {
+    if (receiptRef.current) {
+      // @ts-ignore
+      if (window.html2pdf) {
+        // @ts-ignore
+        window.html2pdf().from(receiptRef.current).save('recu-inscription.pdf');
+      } else if (typeof html2pdf !== 'undefined') {
+        html2pdf().from(receiptRef.current).save('recu-inscription.pdf');
+      }
+    }
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.matricule || !formData.firstName || !formData.lastName || !formData.dateOfBirth || !formData.gender || !formData.address || !formData.city || !formData.phone || !formData.email || !formData.parentFirstName || !formData.parentLastName || !formData.parentPhone || !formData.parentEmail || !formData.parentContact) {
+    if (!formData.matricule || !formData.firstName || !formData.lastName || !formData.dateOfBirth || !formData.gender || !formData.address || !formData.city || !formData.phone || !formData.email || !formData.parentFirstName || !formData.parentLastName || !formData.parentPhone || !formData.parentEmail || !formData.parentContact || !formData.previousSchool || !formData.previousClass) {
       setError('Veuillez remplir tous les champs obligatoires.');
+      setSuccess('');
       return;
     }
     if (!isValidDateFormat(formData.dateOfBirth)) {
       setError('La date de naissance doit être au format AAAA-MM-JJ.');
+      setSuccess('');
+      return;
+    }
+    if (!files.birth || !files.report || !files.id || !files.vaccine) {
+      setError('Veuillez joindre tous les documents obligatoires.');
+      setSuccess('');
       return;
     }
     setError('');
-    alert('Formulaire soumis ! (version minimaliste)');
-    if (onClose) onClose();
+    setLoading(true);
+    try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        data.append(key, value);
+      });
+      data.append('birth', files.birth);
+      data.append('report', files.report);
+      data.append('id', files.id);
+      data.append('vaccine', files.vaccine);
+      // Remplace l'URL ci-dessous par celle de ton backend
+      const response = await axios.post('https://schoolapp.sp-p6.com/api/students/public-register', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setSuccess('Inscription enregistrée avec succès !');
+      setError('');
+      setLoading(false);
+      // On suppose que la réponse contient les infos nécessaires pour le reçu
+      setReceiptData(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erreur lors de la soumission.');
+      setSuccess('');
+      setLoading(false);
+    }
   };
+  if (receiptData) {
+    return (
+      <Receipt
+        data={receiptData}
+        onClose={onClose || (() => setReceiptData(null))}
+        receiptRef={receiptRef}
+        handleDownload={handleDownload}
+      />
+    );
+  }
   return (
     <div style={{ padding: 8, maxWidth: 700, margin: '0 auto' }}>
       <h2 style={{ textAlign: 'center', color: '#1976d2' }}>Inscription en ligne (simple)</h2>
       {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
+      {success && <div style={{ color: 'green', marginBottom: 8 }}>{success}</div>}
       <form onSubmit={handleSubmit} autoComplete="off">
         <label>Matricule*<br /><input name="matricule" value={formData.matricule} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Date de naissance*<br /><input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required placeholder="AAAA-MM-JJ" style={{ width: '100%', marginBottom: 8 }} /></label><br />
@@ -1041,11 +1108,11 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
         <label>Classe précédente*<br /><input name="previousClass" value={formData.previousClass || ''} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Besoins particuliers<br /><input name="specialNeeds" value={formData.specialNeeds || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Informations supplémentaires<br /><input name="additionalInfo" value={formData.additionalInfo || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Acte de naissance*<br /><input type="file" name="birth" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Bulletin scolaire*<br /><input type="file" name="report" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Carte d'identité*<br /><input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Carnet de vaccination*<br /><input type="file" name="vaccine" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <button type="submit" style={{ width: '100%', padding: 10, background: '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600 }}>Valider</button>
+        <label>Acte de naissance*<br /><input type="file" name="birth" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
+        <label>Bulletin scolaire*<br /><input type="file" name="report" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
+        <label>Carte d'identité*<br /><input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
+        <label>Carnet de vaccination*<br /><input type="file" name="vaccine" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
+        <button type="submit" style={{ width: '100%', padding: 10, background: loading ? '#aaa' : '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600 }} disabled={loading}>{loading ? 'Envoi...' : 'Valider'}</button>
       </form>
     </div>
   );
