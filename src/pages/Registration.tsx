@@ -38,6 +38,7 @@ import html2pdf from 'html2pdf.js';
 import { useMediaQuery } from '@mui/material';
 import { format } from 'date-fns';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import type { SelectChangeEvent } from '@mui/material/Select';
 
 const steps = ['Informations personnelles', 'Informations académiques', 'Documents requis'];
 
@@ -1005,7 +1006,10 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
   const [receiptData, setReceiptData] = React.useState<any | null>(null);
   const receiptRef = React.useRef<HTMLDivElement>(null);
   const isValidDateFormat = (dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1046,21 +1050,36 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
     setLoading(true);
     try {
       const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value);
-      });
+      data.append('registration_number', formData.matricule);
+      data.append('first_name', formData.firstName);
+      data.append('last_name', formData.lastName);
+      data.append('date_of_birth', formData.dateOfBirth);
+      data.append('gender', formData.gender);
+      data.append('address', formData.address);
+      data.append('city', formData.city);
+      data.append('phone', formData.phone);
+      data.append('email', formData.email);
+      data.append('password', formData.matricule);
+      data.append('previous_school', formData.previousSchool);
+      data.append('previous_class', formData.previousClass);
+      data.append('special_needs', formData.specialNeeds);
+      data.append('additional_info', formData.additionalInfo);
+      data.append('registration_mode', 'online');
+      data.append('parent_first_name', formData.parentFirstName);
+      data.append('parent_last_name', formData.parentLastName);
+      data.append('parent_phone', formData.parentPhone);
+      data.append('parent_email', formData.parentEmail);
+      data.append('parent_contact', formData.parentContact);
       data.append('birth', files.birth);
       data.append('report', files.report);
       data.append('id', files.id);
       data.append('vaccine', files.vaccine);
-      // Remplace l'URL ci-dessous par celle de ton backend
       const response = await axios.post('https://schoolapp.sp-p6.com/api/students/public-register', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSuccess('Inscription enregistrée avec succès !');
       setError('');
       setLoading(false);
-      // On suppose que la réponse contient les infos nécessaires pour le reçu
       setReceiptData(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de la soumission.');
@@ -1079,42 +1098,70 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
     );
   }
   return (
-    <div style={{ padding: 8, maxWidth: 700, margin: '0 auto' }}>
-      <h2 style={{ textAlign: 'center', color: '#1976d2' }}>Inscription en ligne (simple)</h2>
-      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-      {success && <div style={{ color: 'green', marginBottom: 8 }}>{success}</div>}
-      <form onSubmit={handleSubmit} autoComplete="off">
-        <label>Matricule*<br /><input name="matricule" value={formData.matricule} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Date de naissance*<br /><input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required placeholder="AAAA-MM-JJ" style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Prénom*<br /><input name="firstName" value={formData.firstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Nom*<br /><input name="lastName" value={formData.lastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Genre*<br />
-          <select name="gender" value={formData.gender} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }}>
-            <option value="">Sélectionner</option>
-            <option value="M">Masculin</option>
-            <option value="F">Féminin</option>
-          </select>
-        </label><br />
-        <label>Adresse*<br /><input name="address" value={formData.address} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Ville*<br /><input name="city" value={formData.city} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Téléphone*<br /><input name="phone" value={formData.phone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Email*<br /><input name="email" value={formData.email} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Prénom du parent*<br /><input name="parentFirstName" value={formData.parentFirstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Nom du parent*<br /><input name="parentLastName" value={formData.parentLastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Téléphone du parent*<br /><input name="parentPhone" value={formData.parentPhone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Email du parent*<br /><input name="parentEmail" value={formData.parentEmail} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Contact du parent*<br /><input name="parentContact" value={formData.parentContact} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>École précédente*<br /><input name="previousSchool" value={formData.previousSchool || ''} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Classe précédente*<br /><input name="previousClass" value={formData.previousClass || ''} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Besoins particuliers<br /><input name="specialNeeds" value={formData.specialNeeds || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Informations supplémentaires<br /><input name="additionalInfo" value={formData.additionalInfo || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
-        <label>Acte de naissance*<br /><input type="file" name="birth" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
-        <label>Bulletin scolaire*<br /><input type="file" name="report" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
-        <label>Carte d'identité*<br /><input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
-        <label>Carnet de vaccination*<br /><input type="file" name="vaccine" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} onChange={handleFileChange} /></label><br />
-        <button type="submit" style={{ width: '100%', padding: 10, background: loading ? '#aaa' : '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600 }} disabled={loading}>{loading ? 'Envoi...' : 'Valider'}</button>
-      </form>
-    </div>
+    <Paper elevation={3} sx={{ p: 2, maxWidth: 500, mx: 'auto', mt: 2, borderRadius: 3 }}>
+      <Typography variant="h5" align="center" sx={{ color: 'primary.main', fontWeight: 700, mb: 2 }}>
+        Inscription en ligne (mobile)
+      </Typography>
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      <Box component="form" onSubmit={handleSubmit} autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <TextField label="Matricule" name="matricule" value={formData.matricule} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Date de naissance" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} required fullWidth size="small" placeholder="AAAA-MM-JJ" helperText="Format attendu : AAAA-MM-JJ" />
+        <TextField label="Prénom" name="firstName" value={formData.firstName} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Nom" name="lastName" value={formData.lastName} onChange={handleInputChange} required fullWidth size="small" />
+        <FormControl fullWidth size="small" required>
+          <InputLabel id="gender-label">Genre</InputLabel>
+          <Select labelId="gender-label" name="gender" value={formData.gender} label="Genre" onChange={handleSelectChange}>
+            <MenuItem value="">Sélectionner</MenuItem>
+            <MenuItem value="Masculin">Masculin</MenuItem>
+            <MenuItem value="Féminin">Féminin</MenuItem>
+            <MenuItem value="Autre">Autre</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField label="Adresse" name="address" value={formData.address} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Ville" name="city" value={formData.city} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Téléphone" name="phone" value={formData.phone} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Email" name="email" value={formData.email} onChange={handleInputChange} required fullWidth size="small" type="email" />
+        <Divider sx={{ my: 1 }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>Informations du parent</Typography>
+        <TextField label="Prénom du parent" name="parentFirstName" value={formData.parentFirstName} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Nom du parent" name="parentLastName" value={formData.parentLastName} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Téléphone du parent" name="parentPhone" value={formData.parentPhone} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Email du parent" name="parentEmail" value={formData.parentEmail} onChange={handleInputChange} required fullWidth size="small" type="email" />
+        <TextField label="Contact du parent" name="parentContact" value={formData.parentContact} onChange={handleInputChange} required fullWidth size="small" />
+        <Divider sx={{ my: 1 }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>Informations académiques</Typography>
+        <TextField label="École précédente" name="previousSchool" value={formData.previousSchool} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Classe précédente" name="previousClass" value={formData.previousClass} onChange={handleInputChange} required fullWidth size="small" />
+        <TextField label="Besoins particuliers" name="specialNeeds" value={formData.specialNeeds} onChange={handleInputChange} fullWidth size="small" />
+        <TextField label="Informations supplémentaires" name="additionalInfo" value={formData.additionalInfo} onChange={handleInputChange} fullWidth size="small" />
+        <Divider sx={{ my: 1 }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>Documents à joindre</Typography>
+        <Button variant="outlined" component="label" fullWidth startIcon={<CloudUploadIcon />} color={files.birth ? 'success' : 'primary'}>
+          Acte de naissance*
+          <input type="file" name="birth" accept=".pdf,.jpg,.jpeg,.png" hidden onChange={handleFileChange} />
+          {files.birth && <span style={{ marginLeft: 8, color: '#388e3c', fontWeight: 500 }}>{files.birth.name}</span>}
+        </Button>
+        <Button variant="outlined" component="label" fullWidth startIcon={<CloudUploadIcon />} color={files.report ? 'success' : 'primary'}>
+          Bulletin scolaire*
+          <input type="file" name="report" accept=".pdf,.jpg,.jpeg,.png" hidden onChange={handleFileChange} />
+          {files.report && <span style={{ marginLeft: 8, color: '#388e3c', fontWeight: 500 }}>{files.report.name}</span>}
+        </Button>
+        <Button variant="outlined" component="label" fullWidth startIcon={<CloudUploadIcon />} color={files.id ? 'success' : 'primary'}>
+          Carte d'identité*
+          <input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" hidden onChange={handleFileChange} />
+          {files.id && <span style={{ marginLeft: 8, color: '#388e3c', fontWeight: 500 }}>{files.id.name}</span>}
+        </Button>
+        <Button variant="outlined" component="label" fullWidth startIcon={<CloudUploadIcon />} color={files.vaccine ? 'success' : 'primary'}>
+          Carnet de vaccination*
+          <input type="file" name="vaccine" accept=".pdf,.jpg,.jpeg,.png" hidden onChange={handleFileChange} />
+          {files.vaccine && <span style={{ marginLeft: 8, color: '#388e3c', fontWeight: 500 }}>{files.vaccine.name}</span>}
+        </Button>
+        <Button type="submit" variant="contained" color="primary" fullWidth size="large" sx={{ fontWeight: 700, mt: 2 }} disabled={loading}>
+          {loading ? 'Envoi...' : 'Valider'}
+        </Button>
+      </Box>
+    </Paper>
   );
 }
 
