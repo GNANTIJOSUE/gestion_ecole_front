@@ -988,6 +988,10 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
     parentPhone: '',
     parentEmail: '',
     parentContact: '',
+    previousSchool: '',
+    previousClass: '',
+    specialNeeds: '',
+    additionalInfo: '',
   });
   const [error, setError] = React.useState('');
   const isValidDateFormat = (dateStr: string) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
@@ -1026,6 +1030,21 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
         </label><br />
         <label>Adresse*<br /><input name="address" value={formData.address} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <label>Ville*<br /><input name="city" value={formData.city} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Téléphone*<br /><input name="phone" value={formData.phone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Email*<br /><input name="email" value={formData.email} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Prénom du parent*<br /><input name="parentFirstName" value={formData.parentFirstName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Nom du parent*<br /><input name="parentLastName" value={formData.parentLastName} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Téléphone du parent*<br /><input name="parentPhone" value={formData.parentPhone} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Email du parent*<br /><input name="parentEmail" value={formData.parentEmail} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Contact du parent*<br /><input name="parentContact" value={formData.parentContact} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>École précédente*<br /><input name="previousSchool" value={formData.previousSchool || ''} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Classe précédente*<br /><input name="previousClass" value={formData.previousClass || ''} onChange={handleChange} required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Besoins particuliers<br /><input name="specialNeeds" value={formData.specialNeeds || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Informations supplémentaires<br /><input name="additionalInfo" value={formData.additionalInfo || ''} onChange={handleChange} style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Acte de naissance*<br /><input type="file" name="birth" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Bulletin scolaire*<br /><input type="file" name="report" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Carte d'identité*<br /><input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
+        <label>Carnet de vaccination*<br /><input type="file" name="vaccine" accept=".pdf,.jpg,.jpeg,.png" required style={{ width: '100%', marginBottom: 8 }} /></label><br />
         <button type="submit" style={{ width: '100%', padding: 10, background: '#1976d2', color: 'white', border: 'none', borderRadius: 4, fontWeight: 600 }}>Valider</button>
       </form>
     </div>
