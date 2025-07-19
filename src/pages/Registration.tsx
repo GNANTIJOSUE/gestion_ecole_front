@@ -1071,7 +1071,21 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
       setSuccess('Inscription enregistrée avec succès !');
       setError('');
       setLoading(false);
-      setReceiptData(response.data);
+      // Remplir le reçu avec les données du formulaire
+      const now = new Date();
+      const receipt = {
+        last_name: formData.lastName,
+        first_name: formData.firstName,
+        email: formData.email,
+        registration_number: formData.matricule,
+        date: now.toLocaleString(),
+        parent_first_name: formData.parentFirstName,
+        parent_last_name: formData.parentLastName,
+        parent_phone: formData.parentPhone,
+        parent_email: formData.parentEmail,
+        parent_contact: formData.parentContact,
+      };
+      setReceiptData(receipt);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de la soumission.');
       setSuccess('');
