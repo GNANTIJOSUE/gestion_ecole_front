@@ -1041,42 +1041,33 @@ export function RegistrationMinimal({ onClose }: { onClose?: () => void }) {
       setSuccess('');
       return;
     }
-    if (!files.birth || !files.report || !files.id || !files.vaccine) {
-      setError('Veuillez joindre tous les documents obligatoires.');
-      setSuccess('');
-      return;
-    }
+    // On n'envoie plus les fichiers, seulement les champs texte
     setError('');
     setLoading(true);
     try {
-      const data = new FormData();
-      data.append('registration_number', formData.matricule);
-      data.append('first_name', formData.firstName);
-      data.append('last_name', formData.lastName);
-      data.append('date_of_birth', formData.dateOfBirth);
-      data.append('gender', formData.gender);
-      data.append('address', formData.address);
-      data.append('city', formData.city);
-      data.append('phone', formData.phone);
-      data.append('email', formData.email);
-      data.append('password', formData.matricule);
-      data.append('previous_school', formData.previousSchool);
-      data.append('previous_class', formData.previousClass);
-      data.append('special_needs', formData.specialNeeds);
-      data.append('additional_info', formData.additionalInfo);
-      data.append('registration_mode', 'online');
-      data.append('parent_first_name', formData.parentFirstName);
-      data.append('parent_last_name', formData.parentLastName);
-      data.append('parent_phone', formData.parentPhone);
-      data.append('parent_email', formData.parentEmail);
-      data.append('parent_contact', formData.parentContact);
-      data.append('birth', files.birth);
-      data.append('report', files.report);
-      data.append('id', files.id);
-      data.append('vaccine', files.vaccine);
-      const response = await axios.post('https://schoolapp.sp-p6.com/api/students/public-register', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const payload = {
+        registration_number: formData.matricule,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        date_of_birth: formData.dateOfBirth,
+        gender: formData.gender,
+        address: formData.address,
+        city: formData.city,
+        phone: formData.phone,
+        email: formData.email,
+        password: formData.matricule,
+        previous_school: formData.previousSchool,
+        previous_class: formData.previousClass,
+        special_needs: formData.specialNeeds,
+        additional_info: formData.additionalInfo,
+        registration_mode: 'online',
+        parent_first_name: formData.parentFirstName,
+        parent_last_name: formData.parentLastName,
+        parent_phone: formData.parentPhone,
+        parent_email: formData.parentEmail,
+        parent_contact: formData.parentContact,
+      };
+      const response = await axios.post('https://schoolapp.sp-p6.com/api/students/public-register', payload);
       setSuccess('Inscription enregistrée avec succès !');
       setError('');
       setLoading(false);
